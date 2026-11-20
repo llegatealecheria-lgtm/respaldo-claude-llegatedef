@@ -1,0 +1,598 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Estrategia Meta Ads · Llégate a Lechería · Jun–Ago 2026</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:#f5f5f3;color:#1a1a1a;font-size:13px;line-height:1.5}
+.w{max-width:860px;margin:0 auto;padding:2rem 1rem}
+
+/* HERO */
+.hero{background:#00607F;border-radius:16px;padding:2rem;margin-bottom:2rem}
+.hero-tag{font-size:10px;font-weight:600;color:#65BBB0;letter-spacing:.1em;text-transform:uppercase;margin-bottom:10px}
+.hero h1{font-size:26px;font-weight:700;color:#FFC66E;line-height:1.25;margin-bottom:8px}
+.hero p{font-size:12px;color:#9FE1CB;line-height:1.55;max-width:560px}
+.hero-kpis{display:grid;grid-template-columns:repeat(5,1fr);gap:8px;margin-top:1.5rem;padding-top:1.5rem;border-top:1px solid rgba(101,187,176,0.2)}
+.hk{text-align:center}
+.hk-v{font-size:18px;font-weight:700;color:#F2E5B3}
+.hk-l{font-size:9px;color:#65BBB0;margin-top:2px;text-transform:uppercase;letter-spacing:.05em}
+
+/* PRINCIPLE */
+.principle{background:#F2E5B3;border-radius:10px;padding:1rem 1.25rem;font-size:12px;color:#00607F;margin-bottom:1.75rem;line-height:1.6;border-left:4px solid #FFC66E}
+
+/* SECTION LABEL */
+.sec{font-size:9.5px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:#aaa;margin:2rem 0 .75rem;display:flex;align-items:center;gap:10px}
+.sec::after{content:'';flex:1;height:1px;background:#e0e0e0}
+
+/* SEASON BAR */
+.season-bar{display:grid;grid-template-columns:repeat(8,1fr);gap:4px;margin-bottom:1.5rem}
+.sb{padding:7px 4px;border-radius:6px;text-align:center;font-size:9px;font-weight:700;line-height:1.4}
+.s-hoy{background:#F2E5B3;color:#00607F}
+.s-ma{background:#9FE1CB;color:#003d50}
+.s-a{background:#FFC66E;color:#5a3900}
+.s-p{background:#e24b4a;color:#fff}
+.s-b{background:#ebebeb;color:#888}
+
+/* BUDGET OVERVIEW */
+.budget-overview{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:1.25rem}
+.bo{border-radius:10px;padding:1rem 1.1rem}
+.bo-1{background:#E1F5EE;border-top:3px solid #1D9E75}
+.bo-2{background:#E1F5EE;border-top:3px solid #65BBB0}
+.bo-3{background:#E6F1FB;border-top:3px solid #378ADD}
+.bo-4{background:#FAEEDA;border-top:3px solid #BA7517}
+.bo-name{font-size:10px;font-weight:700;margin-bottom:5px}
+.bo-1 .bo-name{color:#085041}.bo-2 .bo-name{color:#085041}.bo-3 .bo-name{color:#0C447C}.bo-4 .bo-name{color:#633806}
+.bo-amt{font-size:22px;font-weight:700;color:#1a1a1a}
+.bo-days{font-size:10px;color:#666;margin-top:2px}
+
+/* BUDGET TABLE */
+.bgt{width:100%;border-collapse:collapse;border-radius:10px;overflow:hidden;border:1px solid #e0e0e0;margin-bottom:1.5rem;font-size:12px}
+.bgt th{background:#f5f5f3;padding:8px 12px;text-align:right;font-weight:700;font-size:10px;color:#666;border-bottom:1px solid #e0e0e0}
+.bgt th:first-child{text-align:left}
+.bgt td{padding:8px 12px;border-bottom:1px solid #f0f0f0;text-align:right}
+.bgt td:first-child{text-align:left;font-weight:600}
+.bgt .tr-sub td{background:#f5f5f3;font-weight:700}
+.bgt .tr-grand td{background:#00607F;color:white;font-weight:700;font-size:13px}
+.bgt tr:last-of-type:not(.tr-grand) td{border-bottom:none}
+
+/* CAMPAIGN CARD */
+.camp{background:#fff;border:1px solid #e8e8e8;border-radius:14px;margin-bottom:1.75rem;overflow:hidden;box-shadow:0 1px 4px rgba(0,0,0,.04)}
+.camp-bar{height:4px}
+.cb-1{background:linear-gradient(90deg,#1D9E75,#65BBB0)}
+.cb-2{background:linear-gradient(90deg,#65BBB0,#9FE1CB)}
+.cb-3{background:linear-gradient(90deg,#185FA5,#378ADD)}
+.cb-4{background:linear-gradient(90deg,#854F0B,#BA7517)}
+
+.camp-head{padding:1rem 1.25rem;border-bottom:1px solid #f0f0f0;display:flex;justify-content:space-between;align-items:flex-start;gap:10px}
+.ch-name{font-size:15px;font-weight:700;color:#1a1a1a;margin-bottom:4px}
+.ch-obj{font-size:10.5px;color:#777;line-height:1.45}
+.ch-badge{font-size:10px;font-weight:700;padding:4px 12px;border-radius:20px;white-space:nowrap;flex-shrink:0;margin-top:2px}
+.bd-1{background:#E1F5EE;color:#04342C}
+.bd-2{background:#9FE1CB;color:#04342C}
+.bd-3{background:#E6F1FB;color:#042C53}
+.bd-4{background:#FAEEDA;color:#412402}
+
+.camp-meta{display:grid;grid-template-columns:repeat(5,1fr);padding:.75rem 1.25rem;background:#fafafa;border-bottom:1px solid #f0f0f0;text-align:center;gap:4px}
+.cm-v{font-size:12px;font-weight:700;color:#1a1a1a}
+.cm-l{font-size:9px;color:#999;margin-top:1px}
+
+.camp-body{padding:1.1rem 1.25rem}
+.block-h{font-size:9.5px;font-weight:700;color:#aaa;margin:.9rem 0 .45rem;text-transform:uppercase;letter-spacing:.07em}
+
+/* PHASES */
+.phases{display:flex;flex-direction:column;gap:5px;margin-bottom:.9rem}
+.phase{border-radius:8px;padding:.7rem 1rem}
+.ph-hoy{background:#FFF8E1;border-left:3px solid #FFC66E}
+.ph-pico{background:#FCEBEB;border-left:3px solid #e24b4a}
+.ph-alta{background:#FFF3CD;border-left:3px solid #EF9F27}
+.ph-row{display:flex;justify-content:space-between;align-items:center;margin-bottom:3px}
+.ph-date{font-size:11px;font-weight:700}
+.ph-tag{font-size:9px;font-weight:700;padding:2px 8px;border-radius:8px}
+.pt-hoy{background:#FFC66E;color:#5a3900}
+.pt-pico{background:#e24b4a;color:#fff}
+.pt-alta{background:#EF9F27;color:#412402}
+.ph-budget{font-size:14px;font-weight:700}
+.ph-daily{font-size:10px;color:#666;margin-left:5px}
+.ph-note{font-size:10.5px;color:#555;margin-top:3px;line-height:1.5}
+
+/* ADSETS */
+.seg-row{display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-bottom:.9rem}
+.adset{background:#f8f8f6;border-radius:8px;padding:.75rem 1rem}
+.as-head{display:flex;align-items:center;gap:7px;margin-bottom:4px}
+.as-name{font-size:11px;font-weight:700}
+.temp{font-size:9px;font-weight:700;padding:2px 8px;border-radius:8px}
+.tc{background:#E6F1FB;color:#0C447C}
+.tr{background:#FBEAF0;color:#72243E}
+.as-detail{font-size:10.5px;color:#555;line-height:1.55}
+
+/* CREATIVOS */
+.cr-gl{font-size:9px;font-weight:700;color:#aaa;text-transform:uppercase;letter-spacing:.06em;margin:.7rem 0 .35rem}
+.cr-list{display:flex;flex-direction:column;gap:4px}
+.cr{display:grid;grid-template-columns:80px 1fr 76px;gap:8px;align-items:start;padding:.55rem .75rem;border-radius:7px;background:#f8f8f6}
+.cr-st{font-size:8.5px;font-weight:700;padding:2px 6px;border-radius:6px;text-align:center;white-space:nowrap;margin-top:2px}
+.st-listo{background:#E1F5EE;color:#085041}
+.st-grab{background:#E6F1FB;color:#0C447C}
+.st-plan{background:#FAEEDA;color:#633806}
+.st-pub{background:#E1F5EE;color:#085041}
+.st-new{background:#FFC66E;color:#5a3900}
+.cr-t{font-size:11px;font-weight:700;color:#1a1a1a;margin-bottom:2px;line-height:1.35}
+.cr-d{font-size:10px;color:#777;line-height:1.45}
+.cr-ac{font-size:9px;font-weight:700;padding:2px 7px;border-radius:6px;text-align:center;white-space:nowrap;margin-top:2px}
+.ac-p{background:#00607F;color:#F2E5B3}
+.ac-b{background:#65BBB0;color:#003d50}
+.ac-g{background:#FFC66E;color:#5a3900}
+.ac-e{background:#f0f0f0;color:#888;border:1px solid #e0e0e0}
+
+/* METRICS TABLE */
+.metrics-t{width:100%;border-collapse:collapse;font-size:10.5px;border:1px solid #e8e8e8;border-radius:8px;overflow:hidden;margin:.65rem 0}
+.metrics-t th{background:#f5f5f3;padding:6px 10px;text-align:left;font-weight:700;font-size:9.5px;color:#666;border-bottom:1px solid #e0e0e0}
+.metrics-t td{padding:7px 10px;border-bottom:1px solid #f0f0f0;vertical-align:top;line-height:1.45}
+.metrics-t tr:last-child td{border-bottom:none}
+.metrics-t tr:nth-child(even) td{background:#fafaf9}
+.m-warn{color:#854F0B;font-weight:700}
+.m-ok{color:#1D9E75;font-weight:700}
+
+/* COPIES */
+.copy-box{background:#f8f8f6;border-radius:8px;padding:.8rem 1rem;margin-bottom:.5rem;border-left:3px solid #00607F}
+.copy-l{font-size:10px;font-weight:700;color:#999;margin-bottom:4px;text-transform:uppercase;letter-spacing:.04em}
+.copy-t{font-size:11.5px;color:#1a1a1a;line-height:1.65}
+
+/* KPI ROW */
+.kpi-row{display:grid;grid-template-columns:repeat(4,1fr);gap:6px;margin:.75rem 0}
+.kpi{background:#f8f8f6;border-radius:8px;padding:.6rem .8rem;text-align:center}
+.kpi-l{font-size:9px;color:#999;margin-bottom:3px;text-transform:uppercase;letter-spacing:.04em}
+.kpi-v{font-size:14px;font-weight:700;color:#1a1a1a}
+
+/* BOXES */
+.info-box{background:#E1F5EE;border-radius:8px;padding:.7rem 1rem;font-size:11px;color:#085041;margin:.5rem 0;line-height:1.55}
+.warn-box{background:#FAEEDA;border-radius:8px;padding:.7rem 1rem;font-size:11px;color:#633806;margin:.5rem 0;line-height:1.55}
+
+/* CAMP FOOTER */
+.camp-footer{display:flex;align-items:center;justify-content:space-between;padding:.7rem 1.25rem;background:#fafafa;border-top:1px solid #f0f0f0}
+.cf-l{font-size:11px;color:#999}
+.cf-v{font-size:14px;font-weight:700;color:#1a1a1a}
+
+/* RULES */
+.rules{display:grid;grid-template-columns:1fr 1fr;gap:7px;margin-bottom:1.25rem}
+.rule{background:#fff;border:1px solid #ebebeb;border-radius:8px;padding:.75rem 1rem;font-size:11px;color:#555;line-height:1.55}
+.rule strong{display:block;color:#1a1a1a;font-size:12px;margin-bottom:3px}
+
+/* CHECKLIST */
+.cli{display:flex;align-items:flex-start;gap:9px;padding:.6rem .9rem;border-radius:7px;font-size:11.5px;margin-bottom:4px;line-height:1.45}
+.cli-ok{background:#E1F5EE;border-left:3px solid #1D9E75}
+.cli-warn{background:#FAEEDA;border-left:3px solid #EF9F27}
+.cli-stop{background:#FCEBEB;border-left:3px solid #e24b4a}
+
+/* GRAB TABLE */
+.gtable{width:100%;border-collapse:collapse;border-radius:10px;overflow:hidden;border:1px solid #e0e0e0;font-size:11.5px;margin-bottom:1.5rem}
+.gtable th{background:#f5f5f3;padding:7px 12px;text-align:left;font-weight:700;font-size:10px;color:#666;border-bottom:1px solid #e0e0e0}
+.gtable td{padding:7px 12px;border-bottom:1px solid #f0f0f0;vertical-align:top;line-height:1.45}
+.gtable tr:last-child td{border-bottom:none}
+.gtable tr:nth-child(even) td{background:#fafaf9}
+.tag{display:inline-block;font-size:9px;font-weight:700;padding:2px 7px;border-radius:6px;vertical-align:middle}
+.tag-listo{background:#E1F5EE;color:#085041}
+.tag-grabar{background:#FFC66E;color:#5a3900}
+</style>
+</head>
+<body>
+<div class="w">
+
+<!-- HERO -->
+<div class="hero">
+  <div class="hero-tag">Llégate a Lechería · Meta Ads · Informe definitivo</div>
+  <h1>Estrategia de campañas<br>Jun 20 – Ago 31, 2026</h1>
+  <p>4 campañas activas · Objetivo central: cerrar reservas anticipadas antes del pico de temporada alta · Conversiones = DMs a Instagram · Presupuesto total $700 USD</p>
+  <div class="hero-kpis">
+    <div class="hk"><div class="hk-v">$700</div><div class="hk-l">presupuesto total</div></div>
+    <div class="hk"><div class="hk-v">4</div><div class="hk-l">campañas</div></div>
+    <div class="hk"><div class="hk-v">73 días</div><div class="hk-l">duración</div></div>
+    <div class="hk"><div class="hk-v">90+</div><div class="hk-l">creativos en banco</div></div>
+    <div class="hk"><div class="hk-v">6</div><div class="hk-l">públicos en Notion</div></div>
+  </div>
+</div>
+
+<div class="principle">🚩 <strong>Principio estratégico:</strong> Cerrar reservas anticipadas antes de que los propietarios dispongan de sus propiedades directamente. El MOFU de conversión arranca el día 1. El TOFU alimenta la audiencia caliente para septiembre. Sin reservas anticipadas, los propietarios llenan sus aptos en el pico y Llégate pierde ocupación.</div>
+
+<!-- TEMPORADA -->
+<div class="sec">Mapa de temporada · Venezuela · Jun 20 – Sep 2026</div>
+<div class="season-bar">
+  <div class="sb s-hoy">Jun 20–30<br>Pre-alta</div>
+  <div class="sb s-ma">Jul 1–13<br>Media-alta</div>
+  <div class="sb s-a">Jul 14–20<br>Alta</div>
+  <div class="sb s-p">Jul 21–31<br>Pico</div>
+  <div class="sb s-p">Ago 1–15<br>Pico máx</div>
+  <div class="sb s-a">Ago 16–20<br>Alta-baja</div>
+  <div class="sb s-b">Ago 21–31<br>Escasa</div>
+  <div class="sb s-b">Sep 1+<br>Baja</div>
+</div>
+
+<!-- PRESUPUESTO -->
+<div class="sec">Distribución del presupuesto</div>
+<div class="budget-overview">
+  <div class="bo bo-1"><div class="bo-name">C1 · Vacacional MOFU</div><div class="bo-amt">$230</div><div class="bo-days">Jun 20 – Ago 31 · 73 días</div></div>
+  <div class="bo bo-2"><div class="bo-name">C2 · Vacacional TOFU</div><div class="bo-amt">$220</div><div class="bo-days">Jun 20 – Ago 31 · 73 días</div></div>
+  <div class="bo bo-3"><div class="bo-name">C3 · Workation TOFU</div><div class="bo-amt">$100</div><div class="bo-days">Jun 20 – Ago 31 · 73 días</div></div>
+  <div class="bo bo-4"><div class="bo-name">C4 · Corporativo TOFU</div><div class="bo-amt">$100</div><div class="bo-days">Jul 14 – Ago 31 · 49 días</div></div>
+</div>
+<table class="bgt">
+  <thead><tr><th>Campaña</th><th>Jun 20–30</th><th>Julio</th><th>Ago 1–15</th><th>Ago 16–31</th><th>Total</th></tr></thead>
+  <tbody>
+    <tr><td>C1 · Vacacional MOFU (DMs)</td><td>$25</td><td>$135</td><td>$58</td><td>$12</td><td>$230</td></tr>
+    <tr><td>C2 · Vacacional TOFU (tráfico)</td><td>$48</td><td>$98</td><td>$50</td><td>$24</td><td>$220</td></tr>
+    <tr><td>C3 · Workation TOFU (tráfico)</td><td>$27</td><td>$63</td><td>$6</td><td>$4</td><td>$100</td></tr>
+    <tr><td>C4 · Corporativo TOFU (tráfico)</td><td>$0</td><td>$54</td><td>$30</td><td>$16</td><td>$100</td></tr>
+    <tr class="tr-sub"><td>Total por período</td><td>$100</td><td>$350</td><td>$144</td><td>$56</td><td>—</td></tr>
+    <tr class="tr-grand"><td>Total general · Jun 20 – Ago 31</td><td></td><td></td><td></td><td></td><td>$650 USD</td></tr>
+  </tbody>
+</table>
+<div class="warn-box">⚠️ Después del 15 de agosto la disponibilidad de propiedades es escasa — no tiene sentido mantener inversión alta si no hay producto que ofrecer. Reducir C1 a mínimo a partir del 16 ago y redistribuir lo que sobre a C2 TOFU para seguir construyendo audiencia para septiembre.</div>
+
+<!-- C1 -->
+<div class="sec">Campaña 1 · Vacacional MOFU — Reservas anticipadas</div>
+<div class="camp">
+  <div class="camp-bar cb-1"></div>
+  <div class="camp-head">
+    <div>
+      <div class="ch-name">Vente a Lechería — Reserva tu estadía</div>
+      <div class="ch-obj">Objetivo Meta: Mensajes · DM a Instagram · Audiencia: familias, viajeros frecuentes · Retargeting 4,600+ visitas H1 · Prioridad #1 del plan</div>
+    </div>
+    <span class="ch-badge bd-1">Vacacional MOFU</span>
+  </div>
+  <div class="camp-meta">
+    <div><div class="cm-v">Jun 20 – Ago 31</div><div class="cm-l">período</div></div>
+    <div><div class="cm-v">$230 USD</div><div class="cm-l">presupuesto total</div></div>
+    <div><div class="cm-v">Máx $4.50/día</div><div class="cm-l">jul 14 – ago 15</div></div>
+    <div><div class="cm-v">&lt;$0.40</div><div class="cm-l">CPL máximo</div></div>
+    <div><div class="cm-v">Día 3 y 7</div><div class="cm-l">revisión</div></div>
+  </div>
+  <div class="camp-body">
+    <div class="block-h">Fases de presupuesto</div>
+    <div class="phases">
+      <div class="phase ph-hoy">
+        <div class="ph-row"><span class="ph-date">Jun 20 – Jul 13 · 24 días</span><span class="ph-tag pt-hoy">Pre-temporada alta</span></div>
+        <div><span class="ph-budget">$60</span><span class="ph-daily">· $2.50/día</span></div>
+        <div class="ph-note">CPM bajo = leads baratos. Activar retargeting sobre 4,600+ visitas H1. Objetivo: asegurar reservas de agosto antes del pico.</div>
+      </div>
+      <div class="phase ph-pico">
+        <div class="ph-row"><span class="ph-date">Jul 14 – Ago 15 · 33 días</span><span class="ph-tag pt-pico">Pico de conversión · Máxima inversión</span></div>
+        <div><span class="ph-budget">$147</span><span class="ph-daily">· $4.50/día</span></div>
+        <div class="ph-note">Toda la potencia aquí — es cuando hay más producto disponible y más compradores activos. Escalar 10–15% cada 3 días desde el arranque. Activar copy C de urgencia desde el 14 jul.</div>
+      </div>
+      <div class="phase ph-alta">
+        <div class="ph-row"><span class="ph-date">Ago 16 – Ago 31 · 16 días</span><span class="ph-tag pt-alta">Cierre · Disponibilidad escasa</span></div>
+        <div><span class="ph-budget">$23</span><span class="ph-daily">· $1.44/día</span></div>
+        <div class="ph-note">Reducir fuerte — la disponibilidad ya es escasa. No tiene sentido seguir invirtiendo si no hay qué alquilar. Mantener encendido al mínimo para no perder aprendizaje y redistribuir el resto a C2 TOFU.</div>
+      </div>
+    </div>
+
+    <div class="block-h">Segmentación</div>
+    <div class="seg-row">
+      <div class="adset">
+        <div class="as-head"><span class="temp tc">❄️ Fría</span><span class="as-name">P1 — Viajeros frecuentes + Familias · Advantage+ · 60%</span></div>
+        <div class="as-detail">Edad: 25–55 · Instagram · Venezuela excl. 13 estados<br>Caracas, Puerto Ordaz, Maturín, El Tigre, Anaco, Valencia, Maracay</div>
+      </div>
+      <div class="adset">
+        <div class="as-head"><span class="temp tr">🔁 Retargeting</span><span class="as-name">P2 — Audiencia caliente H1 · 40%</span></div>
+        <div class="as-detail">Visitantes perfil IG últimos 60 días (4,600+) + interacciones 90 días + seguidores<br>Excluir: DMs enviados últimos 30 días</div>
+      </div>
+    </div>
+
+    <div class="block-h">Creativos — Oleada 1 (Día 1) · máx 4–5 por conjunto</div>
+    <div class="info-box">Los 3 voice en off van desde el día 1 — ya están grabados y editados, solo falta activarlos en Meta Ads Manager. Tienen precio visible y CTA directo. Son los más fuertes para MOFU.</div>
+
+    <div class="cr-gl">Voice en off · Listos para activar · Todos los conjuntos P1</div>
+    <div class="cr-list">
+      <div class="cr"><span class="cr-st st-listo">✅ Listo</span><div><div class="cr-t">En Lechería hay un apartamento para cada quien (60s)</div><div class="cr-d">Grabado y editado · Todos los perfiles · B-roll propiedades + texto capacidad y precio · CTA: "Escríbenos al DM"</div></div><span class="cr-ac ac-p">Activar ya</span></div>
+      <div class="cr"><span class="cr-st st-listo">✅ Listo</span><div><div class="cr-t">En Lechería hay un apartamento para cada quien (30s)</div><div class="cr-d">Grabado y editado · Versión corta · Ritmo rápido · Máx 2s de b-roll por propiedad · Texto sobreimpreso con capacidad y precio</div></div><span class="cr-ac ac-p">Activar ya</span></div>
+      <div class="cr"><span class="cr-st st-listo">✅ Listo</span><div><div class="cr-t">Lo que pagas en 2 cuartos de hotel aquí es un apartamento completo (60s)</div><div class="cr-d">Grabado y editado · Enfoque familias · Argumento precio directo · Desde $60/noche · CTA: "Temporada alta se llena rápido"</div></div><span class="cr-ac ac-p">Activar ya</span></div>
+    </div>
+
+    <div class="cr-gl" style="margin-top:.7rem">Lifestyle y experiencia · P1 fría · Oleada 1</div>
+    <div class="cr-list">
+      <div class="cr"><span class="cr-st st-pub">Publicado</span><div><div class="cr-t">Así se vive una mañana despertando acá</div><div class="cr-d">May 2026 · Hook emocional lifestyle · ángulo: deseo de experiencia</div></div><span class="cr-ac ac-p">Pauta ya</span></div>
+      <div class="cr"><span class="cr-st st-pub">Publicado</span><div><div class="cr-t">Apto o hotel — ventajas del alquiler vacacional</div><div class="cr-d">Oct 2025 · Argumento de venta directo · Responde objeción principal</div></div><span class="cr-ac ac-p">Pauta ya</span></div>
+      <div class="cr"><span class="cr-st st-pub">Publicado</span><div><div class="cr-t">Cuando planeas unas vacaciones lo primero que piensas...</div><div class="cr-d">Feb 2026 · Hook de identificación · Momento de decisión · Conjunto Familias</div></div><span class="cr-ac ac-p">Pauta ya</span></div>
+    </div>
+
+    <div class="cr-gl" style="margin-top:.7rem">Aptos del banco — Reserva / Oleada 2 según rendimiento día 7</div>
+    <div class="cr-list">
+      <div class="cr"><span class="cr-st st-pub">Publicado</span><div><div class="cr-t">Doral Beach · Jair Guaicamar · Villa Sol</div><div class="cr-d">Dic/Oct/Nov 2025 · IG+TikTok · Activar en semana 2 si CTR de oleada 1 cae bajo 1.5%</div></div><span class="cr-ac ac-g">Semana 2</span></div>
+      <div class="cr"><span class="cr-st st-pub">Publicado</span><div><div class="cr-t">Guaicamar Isidra · Balbina Mar de Leva · Costa Guaica</div><div class="cr-d">Feb/Jul/Dic 2025–2026 · IG · Reserva adicional de reemplazo</div></div><span class="cr-ac ac-g">Semana 2</span></div>
+    </div>
+
+    <div class="cr-gl" style="margin-top:.7rem">Prueba social — Solo P2 Retargeting</div>
+    <div class="cr-list">
+      <div class="cr"><span class="cr-st st-pub">Publicado</span><div><div class="cr-t">Una familia muchas opiniones</div><div class="cr-d">Nov 2025 · UGC familiar real · El mejor creativo para retargeting P2</div></div><span class="cr-ac ac-b">Solo P2</span></div>
+      <div class="cr"><span class="cr-st st-pub">Publicado</span><div><div class="cr-t">Entrevista a clientes</div><div class="cr-d">Sep 2025 · Validación externa · Activar retargeting semana 3+</div></div><span class="cr-ac ac-b">Solo P2</span></div>
+    </div>
+
+    <div class="block-h">Métricas de rendimiento y reemplazos</div>
+    <table class="metrics-t">
+      <thead><tr><th>Señal</th><th>Cuándo</th><th>Acción</th><th>Reemplazo del banco</th></tr></thead>
+      <tbody>
+        <tr><td><span class="m-warn">CTR &lt; 1.5%</span></td><td>Día 7</td><td>Pausar el creativo · No pausar el conjunto</td><td>Entrar con aptos oleada 2: Balbina, Villa Sol, Guaicamar Isidra o Costa Guaica</td></tr>
+        <tr><td><span class="m-warn">CPL &gt; $0.50</span></td><td>Día 7</td><td>Probar copy nuevo antes de pausar el conjunto</td><td>Activar copy C — urgencia pico (después del 14 jul)</td></tr>
+        <tr><td><span class="m-warn">Frecuencia &gt; 2.8</span></td><td>Semana 2</td><td>Rotar creativos · No pausar el conjunto</td><td>Incorporar Balbina o Costa Guaica + Voice en off 30s si no está activo</td></tr>
+        <tr><td><span class="m-warn">Voice en off &lt; 2% CTR</span></td><td>Día 7</td><td>Probar versión contraria (30s vs 60s)</td><td>Si ambas fallan → "Así se vive una mañana" o "Apto vs hotel"</td></tr>
+        <tr><td><span class="m-ok">CTR &gt; 3% y CPL &lt; $0.35</span></td><td>Día 7</td><td>Escalar 15% el presupuesto cada 3–4 días</td><td>—</td></tr>
+      </tbody>
+    </table>
+
+    <div class="block-h">Copies</div>
+    <div class="copy-box"><div class="copy-l">A · P1 Fría — Título: Tu familia lo necesita más de lo que crees</div><div class="copy-t">¿Cuándo fue la última vez que desconectaste de verdad con tu familia? 🌊 Lechería tiene eso que necesitan: playa a pasos, apartamentos con cocina equipada, espacio real para que cada quien respire. Sin habitaciones apretadas. Sin desayunos a precio de hotel. Desde $70/noche para toda la familia. Escríbenos al DM y te enviamos disponibilidad esta semana.</div></div>
+    <div class="copy-box"><div class="copy-l">B · P2 Retargeting — Urgencia directa</div><div class="copy-t">Ya nos visitaste. ¿Qué está esperando? 👀 Agosto se acerca y los mejores apartamentos ya tienen fecha. Desde $70/noche — un DM y en 15 minutos tienes disponibilidad para tus fechas.</div></div>
+    <div class="copy-box"><div class="copy-l">C · Urgencia pico — Activar 14 jul</div><div class="copy-t">Las reservas de julio y agosto se están llenando. 🔥 Si estás pensando en venir a Lechería este verano, el momento de asegurar tu estadía es ahora. Desde $70/noche. Respuesta en menos de 15 minutos. Escríbenos al DM hoy.</div></div>
+
+    <div class="kpi-row">
+      <div class="kpi"><div class="kpi-l">CPL máximo</div><div class="kpi-v">$0.40</div></div>
+      <div class="kpi"><div class="kpi-l">CTR mínimo</div><div class="kpi-v">2.5%</div></div>
+      <div class="kpi"><div class="kpi-l">Frecuencia máx</div><div class="kpi-v">2.8</div></div>
+      <div class="kpi"><div class="kpi-l">Revisar</div><div class="kpi-v">Día 3 y 7</div></div>
+    </div>
+  </div>
+  <div class="camp-footer"><span class="cf-l">C1 · Vacacional MOFU · Jun 20 – Ago 31 · 73 días</span><span class="cf-v">$230 USD</span></div>
+</div>
+
+<!-- C2 -->
+<div class="sec">Campaña 2 · Vacacional TOFU — Descubrir Lechería</div>
+<div class="camp">
+  <div class="camp-bar cb-2"></div>
+  <div class="camp-head">
+    <div>
+      <div class="ch-name">Lechería te está esperando</div>
+      <div class="ch-obj">Objetivo Meta: Visitas al perfil de Instagram · Construir audiencia caliente nueva para retargeting de agosto y MOFU de septiembre</div>
+    </div>
+    <span class="ch-badge bd-2">Vacacional TOFU</span>
+  </div>
+  <div class="camp-meta">
+    <div><div class="cm-v">Jun 20 – Ago 31</div><div class="cm-l">período</div></div>
+    <div><div class="cm-v">$220 USD</div><div class="cm-l">presupuesto total</div></div>
+    <div><div class="cm-v">$3.01/día prom.</div><div class="cm-l">promedio diario</div></div>
+    <div><div class="cm-v">&lt;$0.05</div><div class="cm-l">costo/visita máx</div></div>
+    <div><div class="cm-v">3,000+</div><div class="cm-l">visitas meta</div></div>
+  </div>
+  <div class="camp-body">
+    <div class="block-h">Fases de presupuesto</div>
+    <div class="phases">
+      <div class="phase ph-hoy"><div class="ph-row"><span class="ph-date">Jun 20 – Jul 13 · 24 días</span><span class="ph-tag pt-hoy">Pre-temporada</span></div><div><span class="ph-budget">$48</span><span class="ph-daily">· $2.00/día</span></div><div class="ph-note">CPM bajo = visitas baratas. Meta: 2,000+ visitas nuevas antes del 14 jul para activar retargeting fresco en C1.</div></div>
+      <div class="phase ph-pico"><div class="ph-row"><span class="ph-date">Jul 14 – Ago 31 · 49 días</span><span class="ph-tag pt-pico">Alta → Pico → Cierre</span></div><div><span class="ph-budget">$172</span><span class="ph-daily">· $3.51/día</span></div><div class="ph-note">Sostener y escalar según resultados semanas 1–2. En agosto cuando C1 baja, esta campaña absorbe parte del presupuesto para seguir construyendo audiencia para septiembre.</div></div>
+    </div>
+
+    <div class="block-h">Segmentación</div>
+    <div class="adset" style="margin-bottom:.9rem"><div class="as-head"><span class="temp tc">❄️ Fría</span><span class="as-name">P1 — Viajeros frecuentes nacionales · Advantage+ · 100%</span></div><div class="as-detail">Edad: 25–55 · Instagram · Venezuela excl. 13 estados · Segmentación abierta Advantage+ — dejar que Meta optimice hacia quienes visitan el perfil</div></div>
+
+    <div class="block-h">Creativos · Rotación por bloques de 10 días · Máx 2–3 activas por bloque</div>
+    <div class="info-box">⚠️ Ningún creativo de esta campaña lleva precio ni CTA de reserva — solo mostrar Lechería. En día 7 pausar creativos con CTR &lt; 3%.</div>
+
+    <div class="cr-gl" style="margin-top:.6rem">Bloque 1 · Jun 20–30 · Awareness puro</div>
+    <div class="cr-list">
+      <div class="cr"><span class="cr-st st-pub">Publicado</span><div><div class="cr-t">Lechería sin sound de fondo</div><div class="cr-d">Feb 2026 · Sensorial · Muestra la ciudad sin vender · No parece publicidad</div></div><span class="cr-ac ac-p">Arranque</span></div>
+      <div class="cr"><span class="cr-st st-pub">Publicado</span><div><div class="cr-t">Cuando planeas unas vacaciones lo primero que piensas...</div><div class="cr-d">Feb 2026 · Hook de consideración · Identifica el momento de decisión</div></div><span class="cr-ac ac-p">Arranque</span></div>
+    </div>
+    <div class="cr-gl" style="margin-top:.5rem">Bloque 2 · Jul 1–10 · UGC social</div>
+    <div class="cr-list">
+      <div class="cr"><span class="cr-st st-pub">Publicado</span><div><div class="cr-t">Entrevista a personas en la playa (1) y (2)</div><div class="cr-d">Oct 2025 · Instagram · Gente real hablando del destino · No parece publicidad</div></div><span class="cr-ac ac-p">Jul 1</span></div>
+      <div class="cr"><span class="cr-st st-pub">Publicado</span><div><div class="cr-t">Entrevistas en la calle</div><div class="cr-d">Ago 2025 · IG+TikTok · UGC espontáneo · Mismo formato</div></div><span class="cr-ac ac-p">Jul 1</span></div>
+    </div>
+    <div class="cr-gl" style="margin-top:.5rem">Bloque 3 · Jul 11–20 · Destino y actividades</div>
+    <div class="cr-list">
+      <div class="cr"><span class="cr-st st-pub">Publicado</span><div><div class="cr-t">Top 3 cosas que puedes hacer en Punta La Cruz</div><div class="cr-d">Mar 2026 · Guía de valor · Atrae viajero de experiencias</div></div><span class="cr-ac ac-p">Jul 11</span></div>
+      <div class="cr"><span class="cr-st st-pub">Publicado</span><div><div class="cr-t">Lifestyle Mochima · Entrevista playa (3)</div><div class="cr-d">Ago/Oct 2025 · Destino y zona turística cercana</div></div><span class="cr-ac ac-p">Jul 11</span></div>
+    </div>
+    <div class="cr-gl" style="margin-top:.5rem">Bloque 4 · Jul 21–31 · Consideración</div>
+    <div class="cr-list">
+      <div class="cr"><span class="cr-st st-pub">Publicado</span><div><div class="cr-t">Cuando fue la última vez que intentaste algo nuevo</div><div class="cr-d">Jul 2025 · Desafía la rutina · Dolor del viajero que posterga</div></div><span class="cr-ac ac-p">Jul 21</span></div>
+      <div class="cr"><span class="cr-st st-pub">Publicado</span><div><div class="cr-t">Cómo elegir bien dónde quedarte en Lechería</div><div class="cr-d">Mar 2026 · Guía educativa · Educa antes de reservar</div></div><span class="cr-ac ac-p">Jul 21</span></div>
+    </div>
+    <div class="cr-gl" style="margin-top:.5rem">Bloque 5 · Ago 1–31 · Escalar 2 ganadores por CTR</div>
+    <div class="cr-list">
+      <div class="cr"><span class="cr-st st-pub">Publicado</span><div><div class="cr-t">Entrevista a clientes</div><div class="cr-d">Sep 2025 · Prueba social · Activar cuando audiencia tiene múltiples impactos previos</div></div><span class="cr-ac ac-p">Ago 1</span></div>
+    </div>
+
+    <div class="block-h">Métricas de rendimiento y reemplazos</div>
+    <table class="metrics-t">
+      <thead><tr><th>Señal</th><th>Cuándo</th><th>Acción</th><th>Reemplazo del banco</th></tr></thead>
+      <tbody>
+        <tr><td><span class="m-warn">CTR &lt; 3%</span></td><td>Día 7</td><td>Pausar el creativo · Avanzar al bloque siguiente</td><td>Adelantar el siguiente bloque programado o reutilizar el mejor de los bloques anteriores</td></tr>
+        <tr><td><span class="m-warn">Costo/visita &gt; $0.05</span></td><td>Semana 2</td><td>Revisar creativos · Si el CPM subió, es estacional — no pausar</td><td>Probar con el UGC de entrevistas si no está activo aún</td></tr>
+        <tr><td><span class="m-ok">CTR &gt; 3% y costo/visita &lt; $0.04</span></td><td>Día 7</td><td>Mantener el bloque · No cambiar nada · Dejar que el algoritmo optimice</td><td>—</td></tr>
+      </tbody>
+    </table>
+
+    <div class="copy-box" style="margin-top:.7rem"><div class="copy-l">Copy único · P1 fría · Todos los anuncios TOFU</div><div class="copy-t">Lechería no es solo una playa. Es la ciudad que te devuelve las ganas de existir. 🌊 Vista al mar, gastronomía local, canales, atardeceres que duelen de bonitos — y todo lo que necesitas para quedarte sin complicaciones ni precios de hotel. Visita nuestro perfil y descubre todo lo que puedes hacer acá.</div></div>
+
+    <div class="kpi-row">
+      <div class="kpi"><div class="kpi-l">Costo/visita máx</div><div class="kpi-v">$0.05</div></div>
+      <div class="kpi"><div class="kpi-l">CTR mínimo</div><div class="kpi-v">3.0%</div></div>
+      <div class="kpi"><div class="kpi-l">Meta visitas</div><div class="kpi-v">3,000+</div></div>
+      <div class="kpi"><div class="kpi-l">CPM referencia</div><div class="kpi-v">&lt;$1.50</div></div>
+    </div>
+  </div>
+  <div class="camp-footer"><span class="cf-l">C2 · Vacacional TOFU · Jun 20 – Ago 31 · 73 días</span><span class="cf-v">$220 USD</span></div>
+</div>
+
+<!-- C3 -->
+<div class="sec">Campaña 3 · Chambea in the Sea — Workation TOFU</div>
+<div class="camp">
+  <div class="camp-bar cb-3"></div>
+  <div class="camp-head">
+    <div>
+      <div class="ch-name">Tu oficina frente al mar — Chambea in the Sea</div>
+      <div class="ch-obj">Objetivo Meta: Visitas al perfil de Instagram · Audiencia: nómadas digitales, freelancers, trabajadores remotos · Base para MOFU workation septiembre</div>
+    </div>
+    <span class="ch-badge bd-3">Workation TOFU</span>
+  </div>
+  <div class="camp-meta">
+    <div><div class="cm-v">Jun 20 – Ago 31</div><div class="cm-l">período</div></div>
+    <div><div class="cm-v">$100 USD</div><div class="cm-l">presupuesto total</div></div>
+    <div><div class="cm-v">$2.20/día</div><div class="cm-l">jul (fase principal)</div></div>
+    <div><div class="cm-v">$0.32/día</div><div class="cm-l">ago (sostenimiento)</div></div>
+    <div><div class="cm-v">4,000+</div><div class="cm-l">visitas meta jul</div></div>
+  </div>
+  <div class="camp-body">
+    <div class="block-h">Fases de presupuesto</div>
+    <div class="phases">
+      <div class="phase ph-hoy"><div class="ph-row"><span class="ph-date">Jun 20 – Jul 31 · 41 días</span><span class="ph-tag pt-hoy">Fase principal</span></div><div><span class="ph-budget">$90</span><span class="ph-daily">· $2.20/día</span></div><div class="ph-note">Julio es ideal para nómadas — menos ruido vacacional en el segmento. Arrancar con los 4 creativos disponibles hoy.</div></div>
+      <div class="phase ph-alta"><div class="ph-row"><span class="ph-date">Ago 1 – Ago 31 · 31 días</span><span class="ph-tag pt-alta">Sostenimiento mínimo</span></div><div><span class="ph-budget">$10</span><span class="ph-daily">· $0.32/día</span></div><div class="ph-note">Nunca pausar más de 7 días. La audiencia acumulada en julio se activa con MOFU workation en septiembre.</div></div>
+    </div>
+
+    <div class="block-h">Segmentación</div>
+    <div class="seg-row">
+      <div class="adset"><div class="as-head"><span class="temp tc">❄️ P1</span><span class="as-name">Nómadas digitales v2 · 55%</span></div><div class="as-detail">Edad 25–45 · Instagram · Venezuela excl. 13 estados + diáspora Miami/Panamá/Bogotá</div></div>
+      <div class="adset"><div class="as-head"><span class="temp tc">❄️ P1.1</span><span class="as-name">Viajeros frecuentes Advantage+ · 45%</span></div><div class="as-detail">Misma estructura ganadora H1 2026 ($0.17/DM) · Segmentación abierta · Edad 25–55</div></div>
+    </div>
+
+    <div class="block-h">Creativos</div>
+    <div class="cr-gl">Disponibles hoy — activar al arranque</div>
+    <div class="cr-list">
+      <div class="cr"><span class="cr-st st-grab">Grabado</span><div><div class="cr-t">Chambea in the Sea — video apertura</div><div class="cr-d">Pub. 31 mayo · Hook visual puro sin palabras · El creativo más fuerte del inventario · Prioridad absoluta</div></div><span class="cr-ac ac-p">Pauta ya</span></div>
+      <div class="cr"><span class="cr-st st-grab">Grabado</span><div><div class="cr-t">Facturar no significa dejar de descansar</div><div class="cr-d">Pub. 18 jun · Cortometraje 30s · Contraste trabajo-descanso</div></div><span class="cr-ac ac-p">Pauta ya</span></div>
+      <div class="cr"><span class="cr-st st-plan">Planif.</span><div><div class="cr-t">Home office? NOOO BEACH OFFICE</div><div class="cr-d">Pub. 20 jun · Hook contraste directo · Activar en pauta el mismo día que se publique</div></div><span class="cr-ac ac-p">Pauta 20 jun</span></div>
+      <div class="cr"><span class="cr-st st-plan">Planif.</span><div><div class="cr-t">POV: tu amigo el que trabaja remoto en todos lados</div><div class="cr-d">Pub. 24 jun · Formato aspiracional · Activar al publicarse</div></div><span class="cr-ac ac-p">Pauta 24 jun</span></div>
+    </div>
+    <div class="cr-gl" style="margin-top:.6rem">Boost paralelo</div>
+    <div class="cr-list">
+      <div class="cr"><span class="cr-st st-pub">Publicado</span><div><div class="cr-t">A veces lo más productivo · Adivinen quiénes amanecieron en el mar</div><div class="cr-d">Oct 2025 / Abr 2026 · Humor + inspiracional · Variantes de tono para testear</div></div><span class="cr-ac ac-b">Boost</span></div>
+    </div>
+    <div class="cr-gl" style="margin-top:.6rem">A grabar — julio semana 1 y 2</div>
+    <div class="cr-list">
+      <div class="cr"><span class="cr-st st-new">Grabar</span><div><div class="cr-t">Café, compu, trabajo y vacaciones</div><div class="cr-d">Guión en Notion · Apto Balbina · POV escritorio + vista al mar · Grabar jul 1–7</div></div><span class="cr-ac ac-g">Jul 1–7</span></div>
+      <div class="cr"><span class="cr-st st-new">Grabar</span><div><div class="cr-t">Bloqueo creativo, qué es eso</div><div class="cr-d">Guión en Notion · Links Drive listos · Tomas ciudad + deporte + comida · Grabar jul 7–13</div></div><span class="cr-ac ac-g">Jul 7–13</span></div>
+    </div>
+    <div class="warn-box" style="margin-top:.6rem">❌ NO pautar: "El miedo del freelancer" ni "Muchos te venden vista" — mencionan coworking aliado no confirmado. Activar cuando esté firmado el acuerdo.</div>
+
+    <div class="block-h">Métricas de rendimiento y reemplazos</div>
+    <table class="metrics-t">
+      <thead><tr><th>Señal</th><th>Cuándo</th><th>Acción</th><th>Reemplazo del banco</th></tr></thead>
+      <tbody>
+        <tr><td><span class="m-warn">CTR &lt; 3.5%</span></td><td>Día 7</td><td>Pausar el creativo · No pausar el conjunto</td><td>Activar boost paralelo: "A veces lo más productivo" o "Adivinen quiénes amanecieron"</td></tr>
+        <tr><td><span class="m-warn">Costo/visita &gt; $0.05</span></td><td>Semana 2</td><td>Revisar creativos · Probar copy B si solo se usa A</td><td>Rotar entre P1 Nómadas y P1.1 Viajeros · Escalar el que tenga menor costo/visita</td></tr>
+        <tr><td><span class="m-ok">CTR &gt; 3.5% en P1 vs P1.1</span></td><td>Día 14</td><td>Escalar el conjunto ganador · Mantener el otro en sostenimiento</td><td>—</td></tr>
+      </tbody>
+    </table>
+
+    <div class="kpi-row">
+      <div class="kpi"><div class="kpi-l">Costo/visita máx</div><div class="kpi-v">$0.05</div></div>
+      <div class="kpi"><div class="kpi-l">CTR mínimo</div><div class="kpi-v">3.5%</div></div>
+      <div class="kpi"><div class="kpi-l">Meta visitas jul</div><div class="kpi-v">4,000+</div></div>
+      <div class="kpi"><div class="kpi-l">CPM referencia</div><div class="kpi-v">&lt;$1.20</div></div>
+    </div>
+  </div>
+  <div class="camp-footer"><span class="cf-l">C3 · Workation TOFU · Jun 20 – Ago 31 · 73 días</span><span class="cf-v">$100 USD</span></div>
+</div>
+
+<!-- C4 -->
+<div class="sec">Campaña 4 · Corporativo TOFU — Viajeros de negocios</div>
+<div class="camp">
+  <div class="camp-bar cb-4"></div>
+  <div class="camp-head">
+    <div>
+      <div class="ch-name">Corporate Stay — Hospedaje ejecutivo en Lechería</div>
+      <div class="ch-obj">Objetivo Meta: Visitas al perfil · Audiencia: gerentes, directores, empresas con personal en Anzoátegui · Arrancar 14 julio — no antes</div>
+    </div>
+    <span class="ch-badge bd-4">Corporativo TOFU</span>
+  </div>
+  <div class="camp-meta">
+    <div><div class="cm-v">Jul 14 – Ago 31</div><div class="cm-l">período activo</div></div>
+    <div><div class="cm-v">$100 USD</div><div class="cm-l">presupuesto total</div></div>
+    <div><div class="cm-v">$3.00/día</div><div class="cm-l">julio</div></div>
+    <div><div class="cm-v">$1.48/día</div><div class="cm-l">agosto</div></div>
+    <div><div class="cm-v">14 jul</div><div class="cm-l">arranque</div></div>
+  </div>
+  <div class="camp-body">
+    <div class="info-box">📋 Jun 20–Jul 13 SIN PAUTA: publicar "Top 3 aptos corporativo" (20 jun) y "Auditoría estándar" (22 jun) orgánicamente. Los decisores corporativos necesitan ver autoridad antes de confiar — calentar el perfil primero.</div>
+
+    <div class="block-h">Fases de presupuesto</div>
+    <div class="phases">
+      <div class="phase ph-alta"><div class="ph-row"><span class="ph-date">Jul 14 – Jul 31 · 18 días</span><span class="ph-tag pt-alta">Arranque</span></div><div><span class="ph-budget">$54</span><span class="ph-daily">· $3.00/día</span></div><div class="ph-note">Arrancar con mínimo 2 creativos. Julio es buen mes para B2B — directivos planifican presupuesto Q3.</div></div>
+      <div class="phase ph-pico"><div class="ph-row"><span class="ph-date">Ago 1 – Ago 31 · 31 días</span><span class="ph-tag pt-pico">Sostenimiento activo</span></div><div><span class="ph-budget">$46</span><span class="ph-daily">· $1.48/día</span></div><div class="ph-note">Directivos planifican septiembre en agosto. Rotar a copy C de anticipación Q4. Si CPM supera $5.00, pausar y redirigir presupuesto a C2 TOFU.</div></div>
+    </div>
+
+    <div class="block-h">Segmentación</div>
+    <div class="seg-row">
+      <div class="adset"><div class="as-head"><span class="temp tc">❄️ P1</span><span class="as-name">Gerentes y decisores · IG+Facebook · 55%</span></div><div class="as-detail">Edad 35–58 · Caracas, Valencia, Puerto Ordaz, Maturín, El Tigre, Anaco<br>Advantage+ DESACTIVADO — control manual</div></div>
+      <div class="adset"><div class="as-head"><span class="temp tc">❄️ P2</span><span class="as-name">Empresas en Anzoátegui · IG+Facebook · 45%</span></div><div class="as-detail">Edad 30–55 · El Tigre, Anaco, Maturín, Barcelona, Puerto La Cruz, Caracas<br>⚠️ Crear en Notion Audiences antes del 14 jul</div></div>
+    </div>
+
+    <div class="block-h">Creativos</div>
+    <div class="cr-gl">Disponibles para el arranque del 14 jul</div>
+    <div class="cr-list">
+      <div class="cr"><span class="cr-st st-pub">Publicado</span><div><div class="cr-t">¿Cuánto pierde tu empresa por cada empleado en hotel?</div><div class="cr-d">29 mayo · IG+TikTok · Animación tabla Hotel vs Llégate · El más fuerte del banco corporativo</div></div><span class="cr-ac ac-p">Pauta 14 jul</span></div>
+      <div class="cr"><span class="cr-st st-grab">Grabado</span><div><div class="cr-t">Top 3 aptos con alto estándar corporativo</div><div class="cr-d">Pub. 20 jun · Muestra los aptos certificados · Autoridad para el decisor</div></div><span class="cr-ac ac-p">Pauta 14 jul</span></div>
+      <div class="cr"><span class="cr-st st-new">Grabar</span><div><div class="cr-t">Auditoría estándar corporativo</div><div class="cr-d">Guión completo en Notion · Tú con iPad inspeccionando apto · Checklist en pantalla · GRABAR JUL 1–7 · INDISPENSABLE</div></div><span class="cr-ac ac-g">Jul 1–7</span></div>
+    </div>
+    <div class="cr-gl" style="margin-top:.6rem">Boost — semana 3 y 4</div>
+    <div class="cr-list">
+      <div class="cr"><span class="cr-st st-pub">Publicado</span><div><div class="cr-t">Entrevista a clientes · Enfoque en ahorro más con Llégate</div><div class="cr-d">Nov/Oct 2025 · Prueba social + argumento de ahorro · Boost semana 3–4</div></div><span class="cr-ac ac-b">Boost sem 3–4</span></div>
+    </div>
+
+    <div class="block-h">Métricas de rendimiento y reemplazos</div>
+    <table class="metrics-t">
+      <thead><tr><th>Señal</th><th>Cuándo</th><th>Acción</th><th>Reemplazo del banco</th></tr></thead>
+      <tbody>
+        <tr><td><span class="m-warn">CTR &lt; 2%</span></td><td>Día 7</td><td>Pausar el creativo · No pausar el conjunto</td><td>Activar "Entrevista a clientes" o "Enfoque en ahorro" antes de semana 3</td></tr>
+        <tr><td><span class="m-warn">CPM &gt; $5.00</span></td><td>Día 3</td><td>Pausar C4 y redistribuir presupuesto a C2 TOFU</td><td>C4 es el único que cede presupuesto ante CPM alto — C1 y C2 nunca paran</td></tr>
+        <tr><td><span class="m-ok">CTR &gt; 2% y costo/visita &lt; $0.07</span></td><td>Día 7</td><td>Mantener · No escalar agresivamente con este presupuesto</td><td>—</td></tr>
+      </tbody>
+    </table>
+
+    <div class="kpi-row">
+      <div class="kpi"><div class="kpi-l">Costo/visita máx</div><div class="kpi-v">$0.07</div></div>
+      <div class="kpi"><div class="kpi-l">CTR mínimo</div><div class="kpi-v">2.0%</div></div>
+      <div class="kpi"><div class="kpi-l">CPM máx tolerable</div><div class="kpi-v">$5.00</div></div>
+      <div class="kpi"><div class="kpi-l">Revisar</div><div class="kpi-v">Día 3 y 7</div></div>
+    </div>
+  </div>
+  <div class="camp-footer"><span class="cf-l">C4 · Corporativo TOFU · Jul 14 – Ago 31 · 49 días activos</span><span class="cf-v">$100 USD</span></div>
+</div>
+
+<!-- REGLAS -->
+<div class="sec">Reglas del algoritmo — no negociables</div>
+<div class="rules">
+  <div class="rule"><strong>Nunca pausar un conjunto activo más de 7 días</strong>Si necesitas hacer cambios, duplica el conjunto y edita la copia — no toques el original que está aprendiendo.</div>
+  <div class="rule"><strong>Escalar máximo 10–20% semanal</strong>Nunca subas el presupuesto de golpe. Aumenta gradualmente cada 3–4 días para no reiniciar el aprendizaje.</div>
+  <div class="rule"><strong>No cambiar 3 cosas al mismo tiempo</strong>Cambia audiencia, copy o creativo — una sola cosa. Espera 3 días, evalúa, luego la siguiente.</div>
+  <div class="rule"><strong>Esperar mínimo 3 días antes de juzgar</strong>Un anuncio nuevo necesita 48–72h para que Meta lo distribuya bien. No pauses nada antes.</div>
+  <div class="rule"><strong>La campaña que convierte nunca se pausa</strong>Si C1 genera DMs a $0.25, mete el nuevo creativo dentro del conjunto activo — no pausas el conjunto.</div>
+  <div class="rule"><strong>Frecuencia máxima 3.0</strong>Si supera 3.0, pausar los creativos más vistos y rotar con nuevos. No pausar el conjunto completo.</div>
+</div>
+
+<!-- GRABACIONES -->
+<div class="sec">Creativos pendientes de grabación</div>
+<table class="gtable">
+  <thead><tr><th>Creativo</th><th>Estado</th><th>Campaña</th><th>Fecha límite</th><th>Detalle</th></tr></thead>
+  <tbody>
+    <tr><td>En Lechería hay un apto para cada quien (60s)</td><td><span class="tag tag-listo">✅ Listo</span></td><td>C1</td><td>Activar ya</td><td>Grabado y editado · Solo falta subir a Meta Ads Manager</td></tr>
+    <tr><td>En Lechería hay un apto para cada quien (30s)</td><td><span class="tag tag-listo">✅ Listo</span></td><td>C1</td><td>Activar ya</td><td>Grabado y editado · Solo falta subir a Meta Ads Manager</td></tr>
+    <tr><td>Lo que pagas en 2 cuartos de hotel aquí es un apto completo</td><td><span class="tag tag-listo">✅ Listo</span></td><td>C1</td><td>Activar ya</td><td>Grabado y editado · Solo falta subir a Meta Ads Manager</td></tr>
+    <tr><td>Auditoría estándar corporativo</td><td><span class="tag tag-grabar">Grabar</span></td><td>C4</td><td>Antes 14 jul</td><td>Guión en Notion · iPad inspeccionando apto · INDISPENSABLE para arrancar C4</td></tr>
+    <tr><td>Café, compu, trabajo y vacaciones</td><td><span class="tag tag-grabar">Grabar</span></td><td>C3</td><td>Jul 1–7</td><td>Guión en Notion · Apto Balbina · POV escritorio + vista al mar</td></tr>
+    <tr><td>Bloqueo creativo, qué es eso</td><td><span class="tag tag-grabar">Grabar</span></td><td>C3</td><td>Jul 7–13</td><td>Guión en Notion · Links Drive listos</td></tr>
+  </tbody>
+</table>
+
+<!-- CHECKLIST -->
+<div class="sec">Checklist de lanzamiento · Hoy 20 de junio</div>
+<div class="cli cli-ok">✅ Subir los 3 voice en off a Meta Ads Manager y activarlos en C1 — ya están listos</div>
+<div class="cli cli-ok">✅ Subir "Facturar no significa dejar de descansar" a Meta Ads Manager — C3 Workation TOFU</div>
+<div class="cli cli-ok">✅ Activar "Chambea in the Sea" (video apertura) en pauta — C3 Workation TOFU</div>
+<div class="cli cli-ok">✅ Duplicar estructura Mayo MOFU para C1 Vacacional MOFU — no crear desde cero</div>
+<div class="cli cli-ok">✅ Crear audiencia personalizada: visitantes perfil IG últimos 60 días → P2 retargeting C1</div>
+<div class="cli cli-ok">✅ Activar C2 Vacacional TOFU con "Lechería sin sound de fondo" + "Cuando planeas unas vacaciones"</div>
+<div class="cli cli-ok">✅ Confirmar respuesta de DMs en menos de 15 minutos en horario hábil</div>
+<div class="cli cli-warn">⚠️ Activar "Home office? NOOO BEACH OFFICE" en pauta el 20 jun al publicarse</div>
+<div class="cli cli-warn">⚠️ Activar "POV: tu amigo el que trabaja remoto" en pauta el 24 jun al publicarse</div>
+<div class="cli cli-warn">⚠️ Grabar auditoría estándar corporativo jul 1–7 — indispensable para arrancar C4 el 14 jul</div>
+<div class="cli cli-warn">⚠️ C4 Corporativo: publicar orgánico Jun 20–Jul 13 · Arrancar pauta el 14 julio</div>
+<div class="cli cli-warn">⚠️ Crear P2 "Empresas en Anzoátegui" en Notion Audiences antes del 14 jul</div>
+<div class="cli cli-warn">⚠️ Reducir C1 a mínimo ($1.44/día) a partir del 16 de agosto — disponibilidad escasa</div>
+<div class="cli cli-stop">🚫 No pautar copies que mencionen coworking aliado hasta tener el acuerdo firmado</div>
+<div class="cli cli-stop">🚫 No pausar ninguna campaña activa más de 7 días</div>
+<div class="cli cli-stop">🚫 No escalar el presupuesto de golpe — máximo 15% cada 3–4 días</div>
+<div class="cli cli-stop">🚫 No arrancar C4 antes del 14 de julio</div>
+
+</div>
+</body>
+</html>

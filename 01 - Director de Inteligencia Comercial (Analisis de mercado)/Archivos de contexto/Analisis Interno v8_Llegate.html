@@ -1,0 +1,702 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Análisis Interno v8 — Llégate a Lechería</title>
+<style>
+:root{--teal:#0E6B6B;--teal-d:#084848;--teal-l:#E4F0EF;--gold:#C9962C;--gold-l:#FBF3E0;
+--cream:#FBF8F2;--navy:#12233D;--navy-l:#E7EBF1;--red:#A32C2C;--red-l:#FBEAEA;
+--green:#2C6B41;--green-l:#E6F1EA;--gray:#6C7480;--line:#E2DDD2;}
+*{box-sizing:border-box}
+body{margin:0;background:var(--cream);color:var(--navy);font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Helvetica,Arial,sans-serif;font-size:15px;line-height:1.6}
+.wrap{max-width:1200px;margin:0 auto;padding:0 22px 80px}
+header{background:var(--teal-d);color:#fff;padding:38px 0 30px;margin-bottom:34px;border-bottom:5px solid var(--gold)}
+header .wrap{padding-bottom:0}
+.badge{display:inline-block;background:var(--gold);color:var(--navy);font-size:11px;letter-spacing:.13em;font-weight:700;padding:5px 11px;border-radius:3px;text-transform:uppercase}
+header h1{margin:16px 0 8px;font-size:30px;line-height:1.2;font-weight:700}
+header p{margin:0;color:#B7D4D2;max-width:840px}
+.kpis{display:flex;flex-wrap:wrap;gap:10px;margin-top:22px}
+.kpi{background:rgba(255,255,255,.09);border:1px solid rgba(255,255,255,.18);padding:9px 14px;border-radius:5px;font-size:13px;color:#E8F3F2}
+h2{font-size:23px;margin:0 0 6px;color:var(--teal-d)}
+.sec{margin:0 0 44px}
+.eyebrow{font-size:11px;letter-spacing:.15em;text-transform:uppercase;color:var(--gold);font-weight:700;margin-bottom:5px}
+.lead{color:var(--gray);margin:0 0 20px;max-width:920px}
+.card{background:#fff;border:1px solid var(--line);border-radius:8px;padding:20px 22px;margin-bottom:14px}
+.card h3{margin:0 0 8px;font-size:17px}
+.err{border-left:5px solid var(--red);background:var(--red-l)}
+.ok{border-left:5px solid var(--green);background:var(--green-l)}
+.note{border-left:5px solid var(--gold);background:var(--gold-l)}
+.info{border-left:5px solid var(--teal);background:var(--teal-l)}
+.tag{display:inline-block;font-size:11px;font-weight:700;padding:3px 8px;border-radius:3px;letter-spacing:.05em;text-transform:uppercase}
+.t-err{background:var(--red);color:#fff}.t-ok{background:var(--green);color:#fff}
+.t-warn{background:var(--gold);color:var(--navy)}.t-neutral{background:var(--navy-l);color:var(--navy)}
+table{width:100%;border-collapse:collapse;font-size:13px;background:#fff}
+.scroll{overflow-x:auto;border:1px solid var(--line);border-radius:8px}
+th{background:var(--teal-d);color:#fff;text-align:left;padding:9px 10px;font-size:11.5px;letter-spacing:.04em;text-transform:uppercase;font-weight:600;white-space:nowrap}
+td{padding:9px 10px;border-top:1px solid var(--line);vertical-align:top}
+tbody tr:nth-child(even){background:#FCFBF8}
+.num{text-align:right;font-variant-numeric:tabular-nums;white-space:nowrap}
+.pos{color:var(--red);font-weight:700}.neg{color:var(--green);font-weight:700}.zero{color:var(--gray);font-weight:700}
+.hl{background:#FDF6E6!important}
+ul,ol{margin:8px 0 0;padding-left:20px}li{margin-bottom:6px}
+.small{font-size:12.5px;color:var(--gray)}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.grid3{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
+.stat{background:#fff;border:1px solid var(--line);border-radius:8px;padding:16px 18px}
+.stat .v{font-size:26px;font-weight:700;color:var(--teal-d);line-height:1.1}
+.stat .l{font-size:12px;color:var(--gray);margin-top:4px}
+.matriz{width:100%;border-collapse:collapse;font-size:13px;background:#fff}
+.matriz th,.matriz td{border:1px solid var(--line);padding:13px;vertical-align:top}
+.matriz td strong{display:block;margin-bottom:6px}
+.prio{display:flex;gap:14px;background:#fff;border:1px solid var(--line);border-radius:8px;padding:15px 18px;margin-bottom:10px}
+.prio .n{flex:0 0 34px;height:34px;background:var(--teal);color:#fff;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:700}
+.prio .b{flex:1}.prio .b b{display:block;margin-bottom:3px}
+.dec{margin-top:10px;padding:9px 13px;background:var(--navy);color:#fff;border-radius:5px;font-size:13px;font-weight:600;display:inline-block}
+footer{margin-top:40px;padding-top:18px;border-top:1px solid var(--line);font-size:12px;color:var(--gray);text-align:center}
+@media(max-width:800px){.grid2,.grid3{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="wrap">
+    <span class="badge">Documento interno · No compartir · v8</span>
+    <h1>Análisis interno de costos, precios, mercado y dinero generado</h1>
+    <p>Cuatro capas: lo que pide el propietario, lo que cobra el mercado, cuánto rota <em>cada
+    propietario</em> —no cada conjunto— y cuánto dinero le entró al bolsillo. Esta versión corrige
+    el error de leer las noches sin mirar <em>a qué precio y en qué fecha</em> se vendieron, y de
+    ahí sale el hallazgo que ordena todo el análisis.</p>
+    <div class="kpis">
+      <div class="kpi">17 unidades · 12 propietarios</div>
+      <div class="kpi">130 reservas · 98 cruzadas con ingresos (75%)</div>
+      <div class="kpi">Margen real aplicado: <strong>$24,16/noche</strong></div>
+      <div class="kpi">7 de 7 con precio TA: <strong>secos desde abril</strong></div>
+      <div class="kpi">30 jul 2026</div>
+    </div>
+  </div>
+</header>
+
+<div class="wrap">
+
+<!-- HALLAZGO -->
+<section class="sec">
+  <div class="eyebrow">El hallazgo</div>
+  <h2>El precio de temporada alta sacó del mercado a siete propietarios en abril</h2>
+  <p class="lead">No es una conclusión por propiedad. Es un patrón que se repite sin una sola
+  excepción, y se ve cruzando la columna "Usa precio TA" del inventario contra la fecha de la
+  última reserva de cada propietario.</p>
+  <div class="scroll">
+    <table>
+      <thead><tr><th>Propietario</th><th>Unidad</th><th class="num">¿Aplica precio TA?</th><th class="num">Reservas</th><th class="num">Última reserva</th><th class="num">Meses seco</th></tr></thead>
+      <tbody>
+        <tr style="background:var(--red-l)"><td>Auristela</td><td>Puerto Morro</td><td class="num">Sí</td><td class="num">1</td><td class="num">14 feb</td><td class="num pos">5,5</td></tr>
+        <tr style="background:var(--red-l)"><td>Balbina</td><td>Guaicamar</td><td class="num">Sí</td><td class="num">2</td><td class="num">16 feb</td><td class="num pos">5,5</td></tr>
+        <tr style="background:var(--red-l)"><td>Simón</td><td>Villasol</td><td class="num">Sí</td><td class="num">5</td><td class="num">5 mar</td><td class="num pos">4,8</td></tr>
+        <tr style="background:var(--red-l)"><td>Argenis</td><td>Costa Guaica</td><td class="num">Sí</td><td class="num">6</td><td class="num">1 abr</td><td class="num pos">3,9</td></tr>
+        <tr style="background:var(--red-l)"><td>Virginia</td><td>Playa Mar</td><td class="num">Sí</td><td class="num">4</td><td class="num">2 abr</td><td class="num pos">3,9</td></tr>
+        <tr style="background:var(--red-l)"><td>Joes</td><td>Doral Beach 811</td><td class="num">Sí</td><td class="num">5</td><td class="num">29 abr</td><td class="num pos">3,0</td></tr>
+        <tr style="background:var(--red-l)"><td>Maria Francia</td><td>Guaica Suites</td><td class="num">Sí</td><td class="num">6</td><td class="num">14 may</td><td class="num pos">2,5</td></tr>
+        <tr style="background:var(--gold-l)"><td>Joanna</td><td>Plaza Guaica</td><td class="num">No</td><td class="num">3</td><td class="num">2 may</td><td class="num pos">2,9</td></tr>
+        <tr style="background:var(--green-l)"><td>Dalcira</td><td>Thai K-PB5</td><td class="num">No</td><td class="num">11</td><td class="num"><strong>21 jul</strong></td><td class="num neg">0,3</td></tr>
+        <tr style="background:var(--green-l)"><td>Alexis</td><td>Thai C-PH8</td><td class="num">No</td><td class="num">12</td><td class="num"><strong>24 jul</strong></td><td class="num neg">0,2</td></tr>
+        <tr style="background:var(--green-l)"><td>Ana Karina</td><td>Doral Beach + Thai</td><td class="num">No</td><td class="num">29</td><td class="num"><strong>30 jul</strong></td><td class="num neg">0,0</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <div class="card err" style="margin-top:14px">
+    <h3>Los siete que aplican temporada alta llevan entre 2,5 y 5,5 meses sin colocar una noche</h3>
+    <p>Los tres únicos que siguen reservando en julio —Ana Karina, Alexis y Dalcira— no la aplican.
+    Entre los tres concentran <strong>52 de las 130 reservas</strong> del año.</p>
+    <p>La única excepción es Joanna, que no aplica TA y también está seca. Pero su caso ya estaba
+    identificado: cobra $78 reales contra comparables de $60–$75 sin necesidad de recargo de
+    temporada.</p>
+    <p><strong>Consecuencia práctica:</strong> esto deja de ser siete negociaciones distintas y pasa
+    a ser <em>una sola conversación repetida siete veces</em>. Y no la abres con un benchmark: la
+    abres con su propia fecha. "Su última reserva fue el 2 de abril. Fue justo cuando entró el
+    precio de temporada alta." Eso no se discute.</p>
+  </div>
+  <div class="card note">
+    <h3>Contexto que hay que tener en la cabeza</h3>
+    <p>La cartera completa pasó de 33 reservas en enero a 10 en junio y 14 en julio. El mercado se
+    enfrió para todos, no solo para los siete. Pero los que no subieron precio siguieron colocando
+    y los que subieron se detuvieron: eso es lo que separa un problema de mercado de un problema
+    de tarifa.</p>
+    <p class="small">Cautela honesta: es correlación, no prueba causal, y con 4 o 5 reservas por
+    propietario la muestra es chica. Pero son 7 de 7 sin una excepción, y la dirección coincide con
+    lo que dice el benchmark unidad por unidad. Es suficiente para actuar; no lo presentes como ley.</p>
+  </div>
+</section>
+
+<!-- 00 -->
+<section class="sec">
+  <div class="eyebrow">00 · Cambios respecto del v6</div>
+  <h2>Qué se corrigió esta vez</h2>
+  <div class="grid2">
+    <div class="card ok">
+      <h3>Rotación por propietario, no por conjunto</h3>
+      <p>Antes se contaban reservas del conjunto. Ahora el cruce es
+      <strong>fecha de ingreso + propiedad + propietario</strong> de la base de clientes, y de ahí
+      a ingresos por <strong>nombre del cliente + fecha de ingreso</strong>.</p>
+      <p>El caso que lo motivó: <strong>Joes no tiene 25 reservas, tiene 5.</strong> Las 26 de Doral
+      Beach son casi todas de Ana Karina (22). Eso invierte por completo el diagnóstico de ese
+      edificio.</p>
+    </div>
+    <div class="card ok">
+      <h3>"Usa precio TA" respetado</h3>
+      <p>La columna dice qué propietario está cobrando temporada alta <em>hoy</em>. Siete lo hacen:
+      Balbina, Joes, Maria Francia, Simón, Argenis, Virginia y Auristela. Para ellos el costo de
+      alta es el costo vigente, no una hipótesis.</p>
+      <p><strong>Virginia sí califica</strong> — el v6 la trató como si sus $140 fueran teóricos y
+      eran reales. Corregido, y el resultado cambia a su favor.</p>
+    </div>
+    <div class="card ok">
+      <h3>Capa de dinero generado</h3>
+      <p>Nueva. <code>Total − INGRESO LLEGATE</code> por reserva, agregado por propietario, con
+      cobertura declarada. Es el número con el que se abre una conversación: un comparable se
+      discute, lo que entró a la cuenta no.</p>
+    </div>
+    <div class="card err">
+      <h3>Corregido del v7: Virginia y Argenis</h3>
+      <p><strong>Virginia</strong> — el v7 leyó sus 14 noches y concluyó que el mercado le pagaba
+      la prima. Falso: se alquiló a los precios <em>anteriores</em>. Costo realizado de $50, $80,
+      $100 y $110, promedio <strong>$85</strong>, no $140. Y nada desde el 2 de abril.</p>
+      <p><strong>Argenis</strong> — su costo a capacidad máxima es <strong>$85</strong>, no $75:
+      TA base $75 para 4 personas más el escalonado de $10. Coincide con su costo realizado de
+      $77–$81. Su brecha sube de +$36 a +$46,5.</p>
+    </div>
+    <div class="card ok">
+      <h3>Fuera Ashly y Andrea Rinaldi</h3>
+      <p>Ya no llevas esos apartamentos. Salen del análisis, y con ellos las 13 reservas del campo
+      ambiguo "Ashly Contreas o Andrea Rinaldi" que estaba contaminando Costa Guaica y Tepuy.
+      Argenis queda sin comparable interno de torre.</p>
+    </div>
+  </div>
+</section>
+
+<!-- 01 -->
+<section class="sec">
+  <div class="eyebrow">01 · Qué movió la cartera</div>
+  <h2>Dinero generado, enero–julio 2026</h2>
+  <div class="grid3" style="margin-bottom:16px">
+    <div class="stat"><div class="v">$24.225</div><div class="l">Cobrado a huéspedes</div></div>
+    <div class="stat"><div class="v">$18.225</div><div class="l">Entregado a propietarios</div></div>
+    <div class="stat"><div class="v">$6.000</div><div class="l">Ingreso Llégate (24,8%)</div></div>
+  </div>
+  <div class="card info">
+    <h3>Qué significa "cobertura del cruce"</h3>
+    <p>La base de clientes dice <em>quién reservó, cuándo y de qué propietario</em>. El archivo de
+    ingresos dice <em>cuánto se cobró y cuánto quedó para Llégate</em>, pero no registra al
+    propietario. Para saber cuánto dinero le entró a cada uno hay que pegar los dos archivos por lo
+    único que comparten: <strong>nombre del cliente + fecha de ingreso</strong>.</p>
+    <p>De 130 reservas, 98 pegaron. Las 32 restantes fallaron por nombres escritos distinto en cada
+    archivo, fechas cargadas con un día de diferencia, o reservas que están en la base de clientes
+    pero no en ingresos.</p>
+    <p><strong>Por eso las cifras son piso, no totales.</strong> Joes tiene 40% de cobertura: sus
+    $470 salen de 2 de sus 5 reservas. Lo real es más, no sé cuánto. Frente a un propietario di
+    siempre <em>"al menos"</em>. Virginia, Joanna y Auristela tienen 100%: esas sí son firmes.</p>
+    <p class="small">Arreglarlo es fácil y vale la pena: unificar cómo se escriben los nombres en
+    los dos archivos, o agregar un número de reserva compartido.</p>
+  </div>
+
+  <div class="scroll">
+  <table>
+    <thead><tr>
+      <th>Propietario</th><th>Conjunto</th><th class="num">Reservas</th><th class="num">Cruzadas</th>
+      <th class="num">Noches</th><th class="num">Cobrado</th><th class="num">Al propietario</th>
+      <th class="num">Precio real / noche</th><th class="num">Grupo prom.</th><th class="num">Cobertura</th>
+    </tr></thead>
+    <tbody>
+      <tr class="hl"><td>Ana Karina</td><td>Doral Beach (3 unid.)</td><td class="num">22</td><td class="num">17</td><td class="num">34</td><td class="num">$3.585</td><td class="num"><strong>$2.780</strong></td><td class="num">$107,4</td><td class="num">7,1</td><td class="num">77%</td></tr>
+      <tr class="hl"><td>Alexis</td><td>Thai C-PH8</td><td class="num">12</td><td class="num">10</td><td class="num">29</td><td class="num">$2.505</td><td class="num"><strong>$1.820</strong></td><td class="num">$84,5</td><td class="num">4,9</td><td class="num">83%</td></tr>
+      <tr style="background:var(--red-l)"><td>Argenis</td><td>Costa Guaica</td><td class="num">5</td><td class="num">4</td><td class="num">15</td><td class="num">$1.630</td><td class="num"><strong>$1.310</strong></td><td class="num">$107,5 <span class="small">(costo prop. $77)</span></td><td class="num">6,0</td><td class="num">80%</td></tr>
+      <tr style="background:var(--red-l)"><td>Virginia</td><td>Playa Mar 4B4</td><td class="num">4</td><td class="num">4</td><td class="num">14</td><td class="num">$1.545</td><td class="num"><strong>$1.180</strong></td><td class="num">$111,2 <span class="small">(costo prop. $85)</span></td><td class="num">5,0</td><td class="num">100%</td></tr>
+      <tr><td>Dalcira</td><td>Thai K-PB5</td><td class="num">11</td><td class="num">7</td><td class="num">14</td><td class="num">$1.105</td><td class="num">$800</td><td class="num">$77,9</td><td class="num">4,2</td><td class="num">64%</td></tr>
+      <tr><td>Ana Karina</td><td>Thai (3 unid.)</td><td class="num">4</td><td class="num">4</td><td class="num">7</td><td class="num">$850</td><td class="num">$690</td><td class="num">$122,5</td><td class="num">7,2</td><td class="num">100%</td></tr>
+      <tr><td>Simón</td><td>Villasol A-109</td><td class="num">5</td><td class="num">4</td><td class="num">9</td><td class="num">$780</td><td class="num">$570</td><td class="num">$88,8</td><td class="num">5,4</td><td class="num">80%</td></tr>
+      <tr><td>Joes</td><td>Doral Beach 811</td><td class="num">5</td><td class="num">2</td><td class="num">7</td><td class="num">$660</td><td class="num">$470</td><td class="num">$100,0</td><td class="num">4,0</td><td class="num">40%</td></tr>
+      <tr><td>Joanna</td><td>Plaza Guaica</td><td class="num">3</td><td class="num">3</td><td class="num">8</td><td class="num">$630</td><td class="num">$415</td><td class="num">$78,3</td><td class="num">5,7</td><td class="num">100%</td></tr>
+      <tr><td>Maria Francia</td><td>Guaica Suites 131</td><td class="num">4</td><td class="num">3</td><td class="num">6</td><td class="num">$420</td><td class="num">$290</td><td class="num">$70,0</td><td class="num">3,0</td><td class="num">75%</td></tr>
+      <tr><td>Auristela</td><td>Puerto Morro</td><td class="num">1</td><td class="num">1</td><td class="num">2</td><td class="num">$290</td><td class="num">$230</td><td class="num">$145,0</td><td class="num">9,0</td><td class="num">100%</td></tr>
+      <tr style="background:var(--red-l)"><td>Balbina</td><td>Guaicamar</td><td class="num">1</td><td class="num">0</td><td class="num">—</td><td class="num">—</td><td class="num"><strong>$0 registrado</strong></td><td class="num">—</td><td class="num">6,0</td><td class="num">0%</td></tr>
+      <tr style="background:var(--red-l)"><td>Mariela</td><td>Vientos de Mar PH-8</td><td class="num">0</td><td class="num">0</td><td class="num">—</td><td class="num"><strong>$0</strong></td><td class="num"><strong>$0</strong></td><td class="num">—</td><td class="num">—</td><td class="num">—</td></tr>
+    </tbody>
+  </table>
+  </div>
+
+  <div class="card err" style="margin-top:14px">
+    <h3><span class="tag t-err">Hallazgo nuevo</span> Mariela no tiene ninguna reserva en 2026</h3>
+    <p>El v6 decía que "rota bien con 5 reservas". Es falso. Las <strong>6 reservas de Vientos de
+    Mar son todas de Francisco Arreaza</strong>, que tiene la otra unidad del mismo conjunto
+    (Piso 6-6G). Mariela: cero.</p>
+    <p>Eso la mueve del cuadrante "mantener, no urgente" al de propiedad estancada. Y como sigue sin
+    tener comparables en el benchmark, no se puede saber todavía si es precio, producto o
+    exposición. Es el mejor ejemplo de por qué contar por conjunto engaña.</p>
+  </div>
+</section>
+
+<!-- 02 -->
+<section class="sec">
+  <div class="eyebrow">02 · Reglas del cálculo</div>
+  <h2>Cómo se decide si hay que renegociar</h2>
+  <div class="grid2">
+    <div class="card info">
+      <h3>La regla de decisión</h3>
+      <p>Se compara <strong>tu precio publicado</strong> (costo del propietario + tu comisión)
+      contra la mediana del mercado. Tu comisión va <em>dentro</em> de la comparación: es el precio
+      que el huésped ve.</p>
+      <ul>
+        <li><strong>Igual o por debajo del mercado</strong> — ideal.</li>
+        <li><strong>Hasta +$10</strong> — aceptable. No se toca.</li>
+        <li><strong>Más de +$10</strong> — hay que renegociar.</li>
+      </ul>
+      <p>Pero la petición al propietario tiene un tope realista de <strong>$15–$20</strong>. Cuando
+      la brecha exige más que eso, la salida no es una petición imposible: es quitar el precio de
+      temporada alta, arreglar el escalonado, o reperfilar.</p>
+    </div>
+    <div class="card info">
+      <h3>Margen</h3>
+      <p><strong>$20 general, $25 en propiedades grandes.</strong> Restricción dura: nunca se
+      recorta para cerrar una brecha. Única excepción, MODO DEFENSIVO declarado por ti.</p>
+      <p class="small">Dato de control: el margen realmente aplicado en las 98 reservas cruzadas
+      promedia <strong>$24,16 por noche</strong>, con rango de $15 a $30. Estás por encima de lo
+      que teníamos documentado, y en julio bajaste a $15 en varias — vale la pena mirar si fue
+      decisión o deriva.</p>
+    </div>
+    <div class="card info">
+      <h3>Costo del propietario</h3>
+      <p>A capacidad máxima, aplicando incremento por persona o escalonado. Para los siete que
+      tienen <strong>"Usa precio TA" en TRUE</strong> se usa el costo de temporada alta, porque es
+      el que están cobrando hoy.</p>
+    </div>
+    <div class="card info">
+      <h3>Mercado</h3>
+      <p>Mediana de comparables del mejor nivel disponible, escalada por $/persona a la capacidad
+      de la unidad. Mercado Libre se ajusta −$25 por comisión de inmobiliaria; Airbnb no se toca.
+      <strong>Puerto Morro usa únicamente el Doral Beach de 4 habitaciones</strong>, como
+      indicaste.</p>
+    </div>
+  </div>
+</section>
+
+<!-- 03 -->
+<section class="sec">
+  <div class="eyebrow">03 · Los números</div>
+  <h2>Tabla de cruce — 17 unidades</h2>
+  <div class="scroll">
+  <table>
+    <thead><tr>
+      <th>Propietario</th><th>Unidad</th><th class="num">Hab</th><th class="num">Cap</th>
+      <th class="num">TA?</th><th class="num">Costo prop.</th><th class="num">Margen</th>
+      <th class="num">Tu precio</th><th class="num">Mercado</th><th class="num">Brecha</th>
+      <th class="num">Reservas</th><th class="num">$ al prop.</th><th>Decisión</th>
+    </tr></thead>
+    <tbody>
+      <tr class="hl"><td>Virginia</td><td>Playa Mar 4B4</td><td class="num">2</td><td class="num">7</td><td class="num">Sí</td><td class="num">$140</td><td class="num">$20</td><td class="num">$160</td><td class="num">$89</td><td class="num pos">+$71</td><td class="num">4 <span class="small">(0 desde abr)</span></td><td class="num">$1.180</td><td><strong>Renegociar</strong></td></tr>
+      <tr class="hl"><td>Ana Karina</td><td>Thai Torre N/PB-01</td><td class="num">3</td><td class="num">6</td><td class="num">No</td><td class="num">$110</td><td class="num">$25</td><td class="num">$135</td><td class="num">$70</td><td class="num pos">+$65</td><td class="num">4*</td><td class="num">$690*</td><td>Renegociar</td></tr>
+      <tr class="hl"><td>Ana Karina</td><td>Thai Torre B/N1-8</td><td class="num">3</td><td class="num">8</td><td class="num">No</td><td class="num">$130</td><td class="num">$25</td><td class="num">$155</td><td class="num">$93</td><td class="num pos">+$62</td><td class="num">4*</td><td class="num">$690*</td><td>Renegociar</td></tr>
+      <tr class="hl"><td>Simón</td><td>Villasol A-109</td><td class="num">3</td><td class="num">6</td><td class="num">Sí</td><td class="num">$95</td><td class="num">$25</td><td class="num">$120</td><td class="num">$68</td><td class="num pos">+$52</td><td class="num">5</td><td class="num">$570</td><td>Renegociar estructura</td></tr>
+      <tr class="hl"><td>Joes</td><td>Doral Beach 811</td><td class="num">2</td><td class="num">6</td><td class="num">Sí</td><td class="num">$90</td><td class="num">$20</td><td class="num">$110</td><td class="num">$60</td><td class="num pos">+$50</td><td class="num">5</td><td class="num">$470</td><td><strong>Renegociar</strong></td></tr>
+      <tr class="hl"><td>Balbina</td><td>Guaicamar T-B/N21</td><td class="num">3</td><td class="num">8</td><td class="num">Sí</td><td class="num">$115</td><td class="num">$25</td><td class="num">$140</td><td class="num">$93</td><td class="num pos">+$47</td><td class="num">1</td><td class="num">$0</td><td><strong>Renegociar</strong></td></tr>
+      <tr class="hl"><td>Ana Karina</td><td>Thai D-PH2</td><td class="num">2</td><td class="num">6</td><td class="num">No</td><td class="num">$110</td><td class="num">$20</td><td class="num">$130</td><td class="num">$90</td><td class="num pos">+$40</td><td class="num">4*</td><td class="num">$690*</td><td>Renegociar</td></tr>
+      <tr class="hl"><td>Argenis</td><td>Costa Guaica T1/N2</td><td class="num">3</td><td class="num">6</td><td class="num">Sí</td><td class="num">$85</td><td class="num">$25</td><td class="num">$110</td><td class="num">$64</td><td class="num pos">+$47</td><td class="num">5 <span class="small">(0 desde abr)</span></td><td class="num">$1.310</td><td><strong>Quitar TA</strong></td></tr>
+      <tr><td>Maria Francia</td><td>Guaica Suites 131</td><td class="num">1</td><td class="num">5</td><td class="num">Sí</td><td class="num">$60</td><td class="num">$20</td><td class="num">$80</td><td class="num">$55</td><td class="num pos">+$25</td><td class="num">4</td><td class="num">$290</td><td>Quitar TA</td></tr>
+      <tr><td>Ana Karina</td><td>Doral Beach N11</td><td class="num">2</td><td class="num">8</td><td class="num">No</td><td class="num">$80</td><td class="num">$20</td><td class="num">$100</td><td class="num">$80</td><td class="num pos">+$20</td><td class="num">22*</td><td class="num">$2.780*</td><td>Mantener</td></tr>
+      <tr><td>Dalcira</td><td>Thai K-PB5</td><td class="num">1</td><td class="num">5</td><td class="num">No</td><td class="num">$65</td><td class="num">$20</td><td class="num">$85</td><td class="num">$66</td><td class="num pos">+$19</td><td class="num">11</td><td class="num">$800</td><td>Mantener — rota</td></tr>
+      <tr><td>Ana Karina</td><td>Doral Beach K-PB3</td><td class="num">1</td><td class="num">5</td><td class="num">No</td><td class="num">$50</td><td class="num">$20</td><td class="num">$70</td><td class="num">$55</td><td class="num pos">+$15</td><td class="num">22*</td><td class="num">$2.780*</td><td>Mantener</td></tr>
+      <tr><td>Ana Karina</td><td>Doral Beach N824</td><td class="num">3</td><td class="num">10</td><td class="num">No</td><td class="num">$100</td><td class="num">$25</td><td class="num">$125</td><td class="num">$115</td><td class="num pos">+$10</td><td class="num">22*</td><td class="num">$2.780*</td><td>Mantener</td></tr>
+      <tr><td>Alexis</td><td>Thai C-PH8</td><td class="num">2</td><td class="num">6</td><td class="num">No</td><td class="num">$70</td><td class="num">$20</td><td class="num">$90</td><td class="num">$90</td><td class="num zero">$0</td><td class="num">12</td><td class="num">$1.820</td><td>Mantener / probar +$5</td></tr>
+      <tr style="background:var(--navy-l)"><td>Joanna</td><td>Plaza Guaica 3-6-1</td><td class="num">2</td><td class="num">6</td><td class="num">No</td><td class="num">$70</td><td class="num">$20</td><td class="num">$90</td><td class="num">$68</td><td class="num pos">+$22</td><td class="num">3</td><td class="num">$415</td><td><strong>Bajar a $55</strong></td></tr>
+      <tr><td>Auristela</td><td>Puerto Morro N138</td><td class="num">3</td><td class="num">10</td><td class="num">Sí</td><td class="num">$120</td><td class="num">$25</td><td class="num">$145</td><td class="num">$150</td><td class="num neg">−$5</td><td class="num">1</td><td class="num">$230</td><td>Reperfilar</td></tr>
+      <tr style="background:var(--red-l)"><td>Mariela</td><td>Vientos de Mar PH-8</td><td class="num">1</td><td class="num">4</td><td class="num">No</td><td class="num">$45</td><td class="num">$20</td><td class="num">$65</td><td class="num">SIN DATA</td><td class="num">—</td><td class="num">0</td><td class="num">$0</td><td>Investigar</td></tr>
+    </tbody>
+  </table>
+  </div>
+  <p class="small" style="margin-top:12px">
+  <strong>*</strong> Ana Karina tiene 3 unidades en Doral Beach y 3 en Thai. La base de clientes
+  registra el conjunto, no la unidad: las 22 reservas y los $2.780 son del bloque Doral Beach
+  completo, y las 4 reservas y $690 del bloque Thai. No se pueden repartir por unidad.<br>
+  <strong>TA?</strong> = la unidad está aplicando precio de temporada alta hoy, según el
+  inventario.<br>
+  <strong>Los 3 Thai de Ana Karina</strong> incluyen los $10/noche de su intermediaria dentro del
+  costo. Descontándolos, el dueño real pide $100 / $120 / $100.
+  </p>
+</section>
+
+<!-- 04 -->
+<section class="sec">
+  <div class="eyebrow">04 · Precio contra rotación</div>
+  <h2>Matriz, ahora con rotación real por propietario</h2>
+  <table class="matriz">
+    <tr><th style="width:14%"></th><th style="width:43%">Rota</th><th style="width:43%">No rota</th></tr>
+    <tr>
+      <th>Precio sobre el mercado</th>
+      <td style="background:var(--gold-l)">
+        <strong>Poder comercial — no bajar precio</strong>
+        <b>Ana Karina / Doral Beach</b> — +$10 a +$20, 22 reservas, $2.780, última el 30 de julio.
+        Es tu motor.<br>
+        <b>Alexis</b> — en mercado exacto, 12 reservas, 29 noches, $1.820, última el 24 de julio.
+        La unidad más sana de la cartera.<br>
+        <b>Dalcira</b> — +$19, 11 reservas, última el 21 de julio. Rota sin problema.
+        <p class="small" style="margin-top:8px">Los tres siguen colocando en julio y los tres tienen
+        algo en común: <strong>ninguno aplica precio de temporada alta</strong>. Bajarle el precio a
+        cualquiera de ellos sería regalar margen.</p>
+      </td>
+      <td style="background:var(--red-l)">
+        <strong>Renegociar — aquí está el dinero</strong>
+        <b>Virginia / Playa Mar</b> — +$71. Rotó a costos de $50–$110 hasta el 2 de abril; con el
+        precio de alta no ha colocado una noche en casi cuatro meses.<br>
+        <b>Joes / Doral Beach 811</b> — +$50, seco desde el 29 de abril, mientras Ana Karina sigue
+        colocando en el mismo edificio.<br>
+        <b>Balbina / Guaicamar</b> — +$47, <strong>1 reserva y $0 registrado</strong>, nada desde
+        el 16 de febrero.<br>
+        <b>Argenis / Costa Guaica</b> — +$47, seco desde el 1 de abril.<br>
+        <b>Ana Karina / los 3 Thai</b> — +$40 a +$65, solo 4 reservas entre las tres.<br>
+        <b>Simón / Villasol</b> — +$52, nada desde el 5 de marzo.<br>
+        <b>Maria Francia</b> — +$25, grupos de 3 en un apto de 5, nada desde el 14 de mayo.
+      </td>
+    </tr>
+    <tr>
+      <th>Precio bajo el mercado</th>
+      <td style="background:var(--green-l)">
+        <strong>Subir precio</strong>
+        Nadie limpio en esta casilla. Alexis está exactamente en mercado con la mejor rotación de
+        la cartera: es el único candidato a probar +$5 y vigilar dos meses.
+      </td>
+      <td style="background:var(--navy-l)">
+        <strong>El precio no es todo el problema</strong>
+        <b>Auristela</b> — −$5, 1 reserva, pero de 9 personas y $230. No es precio: es que solo 14
+        de 130 reservas fueron de grupos de 8+.<br>
+        <b>Joanna</b> — cobra $78 real contra comparables de $67, y no rota. Tu cifra de $55 la
+        pone a publicar en $75.<br>
+        <b>Mariela</b> — cero reservas y cero comparables. No se puede decidir todavía.
+      </td>
+    </tr>
+  </table>
+
+  <div class="card note" style="margin-top:16px">
+    <h3>El caso Doral Beach, resuelto</h3>
+    <p>El v6 no podía decidir si Doral Beach tenía poder comercial o si el benchmark estaba sucio.
+    Con la rotación por propietario ya no hace falta: <strong>en el mismo edificio, Ana Karina hace
+    22 reservas a +$10/+$20 sobre mercado y Joes hace 5 a +$50</strong>. El edificio vende. Lo que
+    no vende es el precio de Joes.</p>
+    <p>Ese es además el mejor argumento que tienes para él, y no requiere ningún comparable externo:
+    su vecina de edificio, con el mismo producto, factura cuatro veces más porque cobra menos.</p>
+  </div>
+</section>
+
+<!-- 05 -->
+<section class="sec">
+  <div class="eyebrow">05 · Caso por caso</div>
+  <h2>Qué pedir exactamente</h2>
+
+  <div class="card err">
+    <h3><span class="tag t-err">1 · Renegociar</span> Balbina — Guaicamar</h3>
+    <p>Costo $115 a 8 personas (aplica TA) · tu precio $140 · mercado $93 · <strong>brecha
+    +$47</strong> · <strong>1 reserva, $0 registrado en siete meses</strong>.</p>
+    <p>Es el único caso de la cartera donde el propietario no tiene con qué discutir: su propio
+    calendario. Comparables: Res. Alejandra $74, Costa Guaica $70, Morro Humboldt $52, todos de 3
+    habitaciones en Airbnb.</p>
+    <p>La brecha completa exige bajar $45, y eso no se pide. Se pide en dos movimientos:</p>
+    <ul>
+      <li><strong>Primero, que suelte el precio de temporada alta</strong> — de $115 a $95. Es una
+      petición de $20, dentro de lo razonable, y no se siente como que le devalúan el apartamento.</li>
+      <li><strong>Después, $80 como costo base.</strong> Publicas en $105, brecha +$12, dentro de
+      tolerancia.</li>
+    </ul>
+    <div class="dec">PEDIR: quitar TA ahora ($95). Meta a dos conversaciones: $80.</div>
+  </div>
+
+  <div class="card err">
+    <h3><span class="tag t-err">2 · Renegociar</span> Joes — Doral Beach 811</h3>
+    <p>Costo $90 a 6 personas (aplica TA: base $70 + $10/persona) · tu precio $110 · mercado $60 ·
+    <strong>brecha +$50</strong> · 5 reservas, $470 al propietario.</p>
+    <p>Los tres comparables de 2 habitaciones dentro de Doral Beach están en $50, $55 y $63. Están
+    en su mismo edificio, con sus mismas áreas comunes y su misma playa. No hay prima que defender.</p>
+    <p>El argumento fuerte no es el benchmark: es que <strong>su vecina hizo 22 reservas y $2.780
+    en el mismo período</strong>. No le des el nombre, pero el dato de "otra unidad de este edificio
+    facturó seis veces más" es incontestable.</p>
+    <div class="dec">PEDIR: quitar TA (vuelve a $60 base) y bajar el incremento de $10 a $5 → $70 a 6 pax. Publicas $90, brecha +$30 → segunda meta $50 base.</div>
+  </div>
+
+  <div class="card err">
+    <h3><span class="tag t-err">3 · Renegociar vía intermediaria</span> Ana Karina — los 3 Thai</h3>
+    <p>Brechas de +$40, +$62 y +$65. Son las tres más grandes que quedan, y ahora sabemos que
+    <strong>rotan mal</strong>: solo 4 reservas entre las tres en siete meses, $690.</p>
+    <p>Contrasta con sus tres unidades de Doral Beach: 22 reservas y $2.780. Misma propietaria,
+    precios muy distintos, resultados opuestos. Es el mejor argumento posible porque no la
+    confrontas con un competidor, la confrontas con su propio portafolio.</p>
+    <p>Recuerda descontar los $10/noche de la intermediaria antes de citar cifras: el dueño real
+    pide $100 / $120 / $100, no $110 / $130 / $110.</p>
+    <p>Torre N/PB-01 es el caso más claro: 3 habitaciones para 6 personas, con <strong>cinco
+    comparables de 3 hab / 6 pax</strong> con mediana de $70. Publicar a $135 contra eso no es una
+    prima, es otro producto.</p>
+    <div class="dec">PEDIR (a la intermediaria, no a los dueños): $85–$90 de costo base en las de 3 hab. Argumento: sus propias unidades de Doral Beach.</div>
+  </div>
+
+  <div class="card err">
+    <h3><span class="tag t-err">4 · Renegociar la estructura</span> Simón — Villasol A-109</h3>
+    <p>Costo $95 a 6 personas · tu precio $120 · mercado $68 · <strong>brecha +$52</strong> ·
+    5 reservas, $570.</p>
+    <p>El problema no es el monto total, es que <strong>su capacidad base es de 2 personas</strong>
+    con incremento de $10. Un grupo de 4 —el tamaño donde se concentra tu demanda, 5,4 personas de
+    promedio en sus propias reservas— ya paga $75 de costo contra un mercado de $45 para ese tramo.
+    Está mal tarifado justo donde se vende.</p>
+    <div class="dec">PEDIR: subir capacidad base de 2 a 4 personas al mismo costo, o bajar el incremento de $10 a $5. No pelear el total.</div>
+  </div>
+
+  <div class="card err">
+    <h3><span class="tag t-err">5 · Quitar TA</span> Argenis — Costa Guaica</h3>
+    <p>Costo <strong>$85</strong> a 6 personas (TA base $75 hasta 4 personas + $10 del escalonado) ·
+    tu precio $110 · mercado $64 · <strong>brecha +$47</strong> · nada desde el 1 de abril.</p>
+    <p>Su costo realizado promedio en las 5 reservas que sí entraron fue de <strong>$77</strong>,
+    con 15 noches y $1.310 al bolsillo. O sea que cuando vendía, vendía por debajo de lo que pide
+    hoy — y en estadías largas, que es lo que más le rinde.</p>
+    <p>Ese es el argumento: no le discutas el número, muéstrale que sus mejores meses fueron a $77
+    y que desde que está en $85 lleva cuatro meses en cero.</p>
+    <div class="dec">PEDIR: soltar el precio de temporada alta → $65 base, $75 a capacidad máxima. Publicas $100, brecha +$36 → segunda meta $65 a 6 pax.</div>
+  </div>
+
+  <div class="card note">
+    <h3><span class="tag t-warn">6 · Quitar TA</span> Maria Francia — Guaica Suites</h3>
+    <p>Brecha +$25 con TA aplicada, nada desde el 14 de mayo. Sin TA vuelve a $50, publicas $70,
+    brecha +$15. Sus reservas fueron de grupos de 3 en un apartamento de 5, con costo realizado de
+    $49 — el precio por persona la castiga.</p>
+    <div class="dec">PEDIR: soltar el precio de temporada alta. Una sola petición y es fácil.</div>
+  </div>
+
+  <div class="card info">
+    <h3><span class="tag t-neutral">4b · Bajar a $55</span> Joanna — Plaza Guaica</h3>
+    <p>Costo $70 a 6 personas · tu precio $90 · mercado $68 · 3 reservas en siete meses, $415.</p>
+    <p>Está cobrando $78 reales por noche contra comparables de $60 y $75, y no rota. Con tu cifra:
+    <strong>$55 de costo base, publicas $75</strong>, brecha +$7 — dentro de tolerancia y con tus
+    $20 completos.</p>
+    <p>Nota de estructura: hoy tiene $50 base hasta 4 personas más $10 por persona. Bajar el
+    <em>costo base</em> a $55 fijo hasta 6 personas significa eliminar el incremento, no bajar los
+    $50. Conviene decirlo así de explícito para que no haya malentendido en la conversación.</p>
+    <div class="dec">PEDIR: $55 fijos hasta 6 personas, sin incremento. Publicas $75.</div>
+  </div>
+
+  <div class="card err">
+    <h3><span class="tag t-err">7 · Renegociar</span> Virginia — Playa Mar 4B4</h3>
+    <p>Costo $140 a 7 personas (aplica TA) · tu precio $160 · mercado $89 · <strong>brecha
+    +$71</strong> · <strong>nada desde el 2 de abril</strong>.</p>
+    <p>Sus 14 noches son reales, pero se vendieron a los precios de antes, no a los de ahora. Este
+    es el detalle completo, con 100% de cobertura:</p>
+    <div class="scroll" style="margin:10px 0">
+      <table>
+        <thead><tr><th>Fecha</th><th class="num">Noches</th><th class="num">Personas</th><th class="num">Precio/noche</th><th class="num">Costo del propietario</th></tr></thead>
+        <tbody>
+          <tr><td>11 enero</td><td class="num">3</td><td class="num">5</td><td class="num">$130</td><td class="num">$100</td></tr>
+          <tr><td>8 marzo</td><td class="num">4</td><td class="num">4</td><td class="num">$70</td><td class="num"><strong>$50</strong></td></tr>
+          <tr><td>20 marzo</td><td class="num">3</td><td class="num">5</td><td class="num">$105</td><td class="num">$80</td></tr>
+          <tr><td>2 abril</td><td class="num">4</td><td class="num">6</td><td class="num">$140</td><td class="num">$110</td></tr>
+          <tr style="background:var(--gold-l)"><td><strong>Promedio</strong></td><td class="num">3,5</td><td class="num">5,0</td><td class="num">$111</td><td class="num"><strong>$85</strong></td></tr>
+        </tbody>
+      </table>
+    </div>
+    <p>Rotó a un costo promedio de <strong>$85</strong>, y una de esas noches a $50. Pide $140.
+    Desde que está en ese precio no ha colocado nada en casi cuatro meses.</p>
+    <p>Tiene el mejor argumento de dinero de toda la cartera: <strong>$1.180 en 14 noches</strong>,
+    cifra firme al 100%. Le muestras lo que ganó, le muestras la fecha en que se detuvo, y no hace
+    falta decir nada más.</p>
+    <div class="dec">PEDIR: soltar el precio de temporada alta → $60 base, $90 a 7 personas. Publicas $110, brecha +$21. Es volver exactamente al precio con el que facturó $1.180.</div>
+  </div>
+
+  <div class="card ok">
+    <h3><span class="tag t-ok">8 · No tocar</span> Alexis, Dalcira y Ana Karina en Doral Beach</h3>
+    <p><strong>Alexis</strong> — exactamente en mercado, 12 reservas, 29 noches, $1.820. Es tu
+    mejor unidad. Único candidato de la cartera a subir: probar +$5 y vigilar dos meses.</p>
+    <p><strong>Dalcira</strong> — +$19 con 11 reservas. Rota, no se toca.</p>
+    <p><strong>Ana Karina en Doral Beach</strong> — +$10 a +$20 con 22 reservas y $2.780, última el
+    30 de julio. Es el motor de la cartera y el ejemplo de que el costo, bien puesto, se nota.</p>
+    <p class="small">Los tres tienen "Usa precio TA" en No. No es casualidad: son los tres únicos de
+    la cartera que siguieron colocando después de mayo.</p>
+  </div>
+
+  <div class="card info">
+    <h3><span class="tag t-neutral">9 · Reperfilar</span> Auristela — Puerto Morro</h3>
+    <p>Costo $120 a 10 personas (aplica TA) · tu precio $145 · mercado $150 · <strong>brecha
+    −$5</strong> · 1 reserva de 9 personas, $230.</p>
+    <p>No tiene problema de precio: está por debajo del único comparable. Tiene problema de mercado
+    direccionable — solo 14 de tus 130 reservas fueron de grupos de 8 o más.</p>
+    <p><strong>Cautela:</strong> el mercado de $150 sale de escalar un solo anuncio (Doral Beach
+    4 hab / 8 pax a $120) a 10 personas. Es "el único comparable disponible", no "el mercado". No
+    lo presentes como un hecho frente a ella.</p>
+    <div class="dec">NO tocar tarifa. Reperfilar a grupos grandes, corporativo y eventos.</div>
+  </div>
+
+  <div class="card err">
+    <h3><span class="tag t-err">10 · Investigar</span> Mariela — Vientos de Mar PH-8</h3>
+    <p>Cero reservas, cero dinero, cero comparables. Tres ceros.</p>
+    <p>Su vecino de conjunto Francisco hizo 6 reservas en el mismo período con precios de $60 a $80
+    por noche. Ella pide $45 de costo, o sea que publicarías en $65 — competitivo. Que no se haya
+    alquilado ni una vez con ese precio apunta a producto, fotos o exposición, no a tarifa.</p>
+    <div class="dec">INVESTIGAR: ¿desde cuándo está en cartera? ¿Apareció alguna vez en una campaña? ¿Cómo están las fotos contra las de Francisco?</div>
+  </div>
+</section>
+
+<!-- 06 -->
+<section class="sec">
+  <div class="eyebrow">06 · Orden de llamadas</div>
+  <h2>Prioridades por impacto en dólares</h2>
+  <div class="card err" style="margin-bottom:16px">
+    <h3>La conversación es una sola, repetida siete veces</h3>
+    <p>No abras con el benchmark. Abre con dos datos suyos: <strong>cuánto ganó</strong> y
+    <strong>la fecha en que dejó de ganar</strong>. El benchmark queda para después, si pregunta
+    por qué.</p>
+    <p class="small">Guion base: <em>"Entre enero y abril le entraron $X en Y noches. Su última
+    reserva fue el [fecha]. Coincide con cuando entró el precio de temporada alta. Le propongo
+    volver al precio con el que sí se estaba alquilando."</em> No es pedirle que baje: es pedirle
+    que vuelva a lo que le funcionó.</p>
+  </div>
+
+  <div class="prio"><div class="n">1</div><div class="b">
+    <b>Virginia — soltar la TA, volver a $60 base ($90 a 7 pax)</b>
+    Brecha +$71 y casi cuatro meses seca. Tiene el mejor argumento de dinero de la cartera:
+    <strong>$1.180 en 14 noches</strong>, cifra firme al 100%, a un costo promedio de $85. Le pides
+    volver exactamente al precio con el que facturó eso.
+  </div></div>
+  <div class="prio"><div class="n">2</div><div class="b">
+    <b>Joes — quitar TA y bajar el incremento de $10 a $5</b>
+    Brecha +$50, seco desde el 29 de abril, mientras su vecina de edificio sigue colocando y lleva
+    22 reservas. No necesitas ningún comparable externo para este.
+  </div></div>
+  <div class="prio"><div class="n">3</div><div class="b">
+    <b>Argenis — soltar la TA ($85 → $75 a capacidad máxima)</b>
+    Brecha +$47, seco desde el 1 de abril. Sus mejores meses fueron a un costo realizado de $77,
+    con 15 noches y $1.310. Vendía más barato y ganaba más.
+  </div></div>
+  <div class="prio"><div class="n">4</div><div class="b">
+    <b>Balbina — quitar TA ($115 → $95), meta $80</b>
+    Brecha +$47 con una sola reserva y cero dinero registrado. Nada desde el 16 de febrero: es la
+    más seca de la cartera. Verifica antes si tuvo exposición en campañas.
+  </div></div>
+  <div class="prio"><div class="n">5</div><div class="b">
+    <b>Simón — arreglar el escalonado, no el monto</b>
+    +$52 y nada desde el 5 de marzo. Capacidad base de 2 personas es el problema real: mata el
+    tramo de 4-6, que es donde está tu demanda.
+  </div></div>
+  <div class="prio"><div class="n">6</div><div class="b">
+    <b>Ana Karina — los 3 Thai, vía intermediaria</b>
+    +$40 a +$65 y solo 4 reservas entre las tres, contra 22 de sus Doral Beach. No aplican TA, así
+    que aquí el argumento es distinto: la confrontas con su propio portafolio.
+  </div></div>
+  <div class="prio"><div class="n">7</div><div class="b">
+    <b>Joanna — pedir $55 fijos hasta 6 · Maria Francia — soltar la TA</b>
+    Peticiones chicas. Joanna cierra a +$7, Maria Francia a +$15. Ambas dentro de tolerancia.
+  </div></div>
+  <div class="prio"><div class="n">8</div><div class="b">
+    <b>Auristela y Mariela — no son conversación de precio</b>
+    Auristela está por debajo del mercado y necesita otro comprador. Mariela lleva siete meses en
+    cero con un precio competitivo: hay que diagnosticar producto, fotos y exposición.
+  </div></div>
+</section>
+
+<!-- 07 -->
+<section class="sec">
+  <div class="eyebrow">07 · Segunda fuente</div>
+  <h2>Benchmark AirDNA — submercado Lechería</h2>
+  <p class="lead">Fuente: AirDNA plan gratuito, submercado 85291, etiquetado "Anzoátegui" pero
+  geográficamente Lechería. Extraído manualmente. Universo: 427 listados activos (+23,1%
+  interanual), Market Score 69/100.</p>
+  <div class="scroll">
+    <table>
+      <thead><tr><th>Categoría</th><th class="num">Listados</th><th class="num">Ingreso anual prom.</th><th class="num">Tendencia</th><th class="num">ADR mediana*</th><th class="num">Rango (n=50)</th></tr></thead>
+      <tbody>
+        <tr><td>1 habitación</td><td class="num">140</td><td class="num">$5.750</td><td class="num">+5,1%</td><td class="num">$41,50</td><td class="num">$19 – $88</td></tr>
+        <tr><td>2 habitaciones</td><td class="num">173</td><td class="num">$6.593</td><td class="num">−0,6%</td><td class="num">$57,50</td><td class="num">$36 – $107</td></tr>
+        <tr><td>3 habitaciones</td><td class="num">93</td><td class="num">$7.432</td><td class="num">−4,9%</td><td class="num">$62,50</td><td class="num">$26 – $153</td></tr>
+        <tr><td>4+ habitaciones</td><td class="num">21</td><td class="num">$12.015</td><td class="num">−27,6%</td><td class="num">No calculada</td><td class="num">—</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <p class="small" style="margin-top:8px">*Mediana sobre muestra de 50 propiedades por categoría,
+  para evitar que outliers de lujo distorsionen la referencia.</p>
+
+  <div class="card note" style="margin-top:14px">
+    <h3>📐 Ocupación implícita — cálculo propio</h3>
+    <p><strong>Fórmula:</strong> (Ingreso anual ÷ ADR mediana) ÷ 365</p>
+    <div class="scroll">
+      <table>
+        <thead><tr><th>Categoría</th><th class="num">Ingreso anual</th><th class="num">ADR mediana</th><th class="num">Noches ocupadas</th><th class="num">Ocupación implícita</th></tr></thead>
+        <tbody>
+          <tr><td>1 habitación</td><td class="num">$5.750</td><td class="num">$41,50</td><td class="num">~139</td><td class="num"><strong>~38%</strong></td></tr>
+          <tr><td>2 habitaciones</td><td class="num">$6.593</td><td class="num">$57,50</td><td class="num">~115</td><td class="num"><strong>~31%</strong></td></tr>
+          <tr><td>3 habitaciones</td><td class="num">$7.432</td><td class="num">$62,50</td><td class="num">~119</td><td class="num"><strong>~33%</strong></td></tr>
+        </tbody>
+      </table>
+    </div>
+    <p class="small" style="margin-top:10px"><strong>Honestidad metodológica:</strong> cruza
+    población completa (ingreso anual de todos los listados) con muestra (ADR mediana de 50). Es
+    una estimación indicativa, no un dato de AirDNA — la ocupación real está detrás del muro de
+    pago. Úsalo como orden de magnitud, nunca como cifra citada.</p>
+    <p><strong>Para qué sirve en una negociación:</strong> un apartamento de 2 habitaciones en
+    Lechería se ocupa alrededor de un tercio del año. Un propietario que espera "estar lleno" está
+    esperando algo que el submercado completo no logra. Y con la oferta creciendo 23% al año e
+    ingresos por listado planos o cayendo, la referencia de hace tres años ya no existe.</p>
+  </div>
+</section>
+
+<!-- 08 -->
+<section class="sec">
+  <div class="eyebrow">08 · Lo que falta</div>
+  <h2>Huecos de data</h2>
+  <div class="grid2">
+    <div class="card note">
+      <h3>1 · Cobertura del cruce: 75%</h3>
+      <p>32 de 130 reservas no cruzaron con ingresos, por diferencias de nombre o fecha. Las peores:
+      Joes (40%), Dalcira (64%), Maria Francia (75%). Las cifras de dinero son piso, no total.
+      Antes de sentarte con Joes conviene revisar sus 3 reservas sin cruce.</p>
+    </div>
+    <div class="card note">
+      <h3>2 · Benchmark de Doral Beach, tramo alto</h3>
+      <p>Faltan 3 comparables de 3 hab / 8-10 pax dentro de Doral Beach o equivalente,
+      preferiblemente Airbnb. Bloquea saber si Ana Karina tiene espacio para <em>subir</em> en tu
+      conjunto más rentable.</p>
+    </div>
+    <div class="card note">
+      <h3>3 · Vientos de Mar</h3>
+      <p>Cero comparables y ahora sabemos que Mariela tiene cero reservas. Ya no es baja prioridad.
+      Se necesitan 2-3 anuncios de 1 hab / 4 pax en la zona.</p>
+    </div>
+    <div class="card note">
+      <h3>4 · Puerto Morro</h3>
+      <p>Un solo comparable, de 4 habitaciones. Se necesitan 3 de 3-4 hab / 8-10 pax en El Morro,
+      en Airbnb, para evitar el ruido de comisión inmobiliaria.</p>
+    </div>
+    <div class="card note">
+      <h3>5 · Unificar nombres y fechas entre archivos</h3>
+      <p>Es lo que arregla el 25% de reservas sin cruzar. Un número de reserva compartido entre la
+      base de clientes y el archivo de ingresos convertiría estas cifras piso en cifras exactas, y
+      te dejaría hablar de dinero con cualquier propietario sin la advertencia de "al menos".</p>
+    </div>
+    <div class="card note">
+      <h3>6 · El margen bajó en julio</h3>
+      <p>Varias reservas de julio salieron con $15 de margen en vez de $20. Vale la pena revisar si
+      fue una decisión de temporada o deriva operativa.</p>
+    </div>
+  </div>
+
+  <div class="card info">
+    <h3>Lo que este análisis <em>no</em> dice</h3>
+    <p>No dice que la cartera esté sobrevalorada. De 17 unidades, <strong>7 están dentro de
+    tolerancia o por debajo del mercado</strong>, y las que siguen rotando generan la mayor parte de
+    los $18.225 entregados a propietarios.</p>
+    <p>Tampoco dice que el precio de temporada alta sea la única causa de la caída. La cartera
+    completa bajó de 33 reservas en enero a 10 en junio: el mercado se enfrió para todos. Lo que sí
+    dice es que <strong>los que no subieron precio siguieron colocando y los que subieron se
+    detuvieron</strong>, sin una sola excepción en siete casos.</p>
+  </div>
+</section>
+
+<footer>
+  Análisis interno v7 · Llégate a Lechería · 30 de julio de 2026 · Uso interno, no compartir<br>
+  Fuentes: Inventario maestro Jera IA 7.1 · Benchmark DEFINITIVO (35 anuncios con precio) ·
+  Base de datos Llégate 2026 (130 reservas ene–jul) · Ingresos Llégate (98 reservas cruzadas) ·
+  AirDNA submercado 85291
+</footer>
+
+</div>
+</body>
+</html>

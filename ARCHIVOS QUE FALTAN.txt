@@ -1,0 +1,29 @@
+Archivos de contexto que están en los proyectos de Claude pero NO se encontraron en Documentos ni Descargas
+(buscarlos en Drive o en otra carpeta; si no aparecen, se pueden copiar desde la vista previa del proyecto en Claude)
+
+01 - Análisis de mercado
+- Avatar Propietario Llegate UNIFICADO.md  (en Descargas hay una versión HTML: Avatar_Propietario_Llegate_UNIFICADO_1.html)
+- Campaña de mensajes (texto)
+- historial tarifas aliado.md
+- Investigacion Mercado Alquiler Vacacional Lecheria.md
+- Investigacion Parte2_Algoritmo Airbnb RevenueManagement Superhosts.md
+- Carpeta "claude" (1 elemento)
+
+05 - ADS Llégate a Lechería
+- Competencia de reel TOFU (Trafico) Prueba 2 optimi ....md
+- evaluacion campana C1_30jul2026.html
+- persona C el que celebra en grande.pdf
+- 26 imágenes (IMG_4148 a IMG_4168 y photo_1 a photo_5 del 20260620) y la carpeta "claude"
+
+07 - Gestión general de Notion
+- Contexto CRM Llégate a Lechería.pdf
+
+13 - Gestor financiero
+- "Ingresos Llegate" y "Llegate_Finanzas_2026 def}" son fuentes sincronizadas de Google Drive (ya viven en Drive)
+
+16 - Cortes administrativos
+- Conversaciones de WhatsApp · Registro corregido.docx
+- Carpeta "claude" (1 elemento)
+
+Nota: en 01, "comparabilidad y ajustes", "demanda y rotacion" y "estructura de precios y temporadas" se tomaron de la skill analista-de-mercado-llegate (versión actual de la skill).
+Proyectos sin archivos de contexto: 02 Jera.AI, 04 Copywriter, 06 Formatos, 08 ClickUp, 09 Dashboard, 12 Proyección, 14 Organizador, 15 IA inmobiliarias.
